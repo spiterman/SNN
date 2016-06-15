@@ -2,20 +2,24 @@ const canvas = $('#canvas');
 var counter = 0;
 var connectionStarted = false;
 const neuronRadius = 25;
+const neuronStrokeWidth = 4;
+const height = canvas.height();
+const width = canvas.width();
 
 function addNode() {
-  var x_coord = Math.floor(Math.random() * 500);
-  var y_coord = Math.floor(Math.random() * 250);
+  var x_coord = neuronRadius + Math.floor(Math.random() * (width - 2*neuronRadius - neuronStrokeWidth));
+  var y_coord = neuronRadius + Math.floor(Math.random() * (height - 2*neuronRadius - neuronStrokeWidth));
+
   var n = 'N' + counter;
   canvas.addLayer({
     type: 'arc',
     draggable: true,
     strokeStyle: '#000',
-    strokeWidth: 5,
+    strokeWidth: neuronStrokeWidth,
     fillStyle: 'red',
     groups: [n],
     dragGroups: [n],
-    name: 'N' + counter,
+    name: n,
     x: x_coord,
     y: y_coord,
     radius: neuronRadius
@@ -59,7 +63,6 @@ function connectNodes(){
     return
   }
   //Account for Neuron Radius
-  //Needs fixing again
   var ratio = ((finish.y - start.y)/(finish.x - start.x))
   var theta = Math.atan(ratio)
   if(finish.x <= start.x) {
