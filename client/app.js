@@ -13,7 +13,6 @@ function addNode() {
     strokeStyle: '#000',
     strokeWidth: 5,
     fillStyle: 'red',
-    // bringToFront: true,
     groups: [n],
     dragGroups: [n],
     name: 'N' + counter,
@@ -26,7 +25,6 @@ function addNode() {
     draggable: true,
     groups: [n],
     dragGroups: [n],
-    // bringToFront: true,
     strokeStyle: "#000",
     strokeWidth: 3,
     text: n,
@@ -43,30 +41,45 @@ function printLayers(){
 }
 
 function connectNodes(){
+  //Retrive Nodes to connect
+  const startNode = $('#startNode');
+  const endNode = $('#endNode');
+
+  //Selects the Node layers
   var start = canvas.getLayers(function(l){
-    return (l.name === 'N0');
+    return (l.name === startNode.val());
   })[0];
   var finish = canvas.getLayers(function(l){
-    return (l.name === 'N1')
+    return (l.name === endNode.val());
   })[0];
 
-  var theta = Math.atan((finish.y - start.y)/(finish.x - start.x))
-  if(theta >= 0) {
-    var x1 = start.x + Math.cos(theta) * neuronRadius;
-    var y1 = start.y + Math.sin(theta) * neuronRadius;
-    var x2 = finish.x - Math.cos(theta) * neuronRadius;
-    var y2 = finish.y - Math.sin(theta) * neuronRadius;
-  } else {
+  if(!start || !finish){
+    startNode.val("");
+    endNode.val("");
+    alert("Invalid Nodes!");
+    return
+  }
+  //Account for Neuron Radius
+  //Needs fixing again
+  var ratio = ((finish.y - start.y)/(finish.x - start.x))
+  var theta = Math.atan(ratio)
+  if(finish.x <= start.x) {
     var x1 = start.x - Math.cos(theta) * neuronRadius;
     var y1 = start.y - Math.sin(theta) * neuronRadius;
     var x2 = finish.x + Math.cos(theta) * neuronRadius;
     var y2 = finish.y + Math.sin(theta) * neuronRadius;
+  } else {
+    var x1 = start.x + Math.cos(theta) * neuronRadius;
+    var y1 = start.y + Math.sin(theta) * neuronRadius;
+    var x2 = finish.x - Math.cos(theta) * neuronRadius;
+    var y2 = finish.y - Math.sin(theta) * neuronRadius;
   }
 
+  //Draws the arrow between
   canvas.drawLine({
     draggable: true,
     layer: true,
-    groups: ['N0','N1'],
+    // groups: ['N0','N1'],
     strokeStyle: '#0000ff',
     strokeWidth: 4,
     endArrow: true,
@@ -75,15 +88,11 @@ function connectNodes(){
     x1: x1, y1: y1,
     x2: x2, y2: y2
   })
-  // console.log(start.x)
 
+  Clear input fields
+  startNode.val("");
+  endNode.val("");
 }
 
-// var connectNodes =
-// function () {
-//   return function(startNode){
-//     return function(endNode){
 
-//     }
-//   }
-// }
+
