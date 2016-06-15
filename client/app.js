@@ -89,7 +89,7 @@ function connectNodes(){
     x2: x2, y2: y2
   })
 
-  Clear input fields
+  // Clear input fields
   startNode.val("");
   endNode.val("");
 }
