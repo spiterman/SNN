@@ -2,12 +2,19 @@
 <html>
 <head>
   <title></title>
-  <link rel="stylesheet" href="bower_components/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="bower_components/dist/css/bootstrap-theme.min.css">
+  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <canvas id="canvas"></canvas>
+
+    <canvas id="canvas" height="300" width="600"></canvas>
+
+    <div class="controlPanel">
+      <button class="btn btn-primary" onclick="addNode()">
+        Add Node
+      </button>
+    </div>
 
   <script src="bower_components/jquery/dist/jquery.min.js"></script>
   <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
