@@ -4,14 +4,15 @@ html, body {
   background-color: gray;
 }
 
+.controlPanel {
+  width: 200px;
+  position: relative;
+}
 
 canvas {
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 5%;
-  margin-bottom: 5%;
-  width: 75%;
-  height: 85%;
-  display: block;
+  margin-top: 200px;
+  margin-left: 15%;
+  display: inline-block;
   background-color: white;
 }
+
