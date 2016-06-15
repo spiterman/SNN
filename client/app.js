@@ -33,7 +33,6 @@ function addNode() {
   })
   .drawLayers();
   counter++;
-  console.log(canvas.getLayers())
 }
 
 function printLayers(){
