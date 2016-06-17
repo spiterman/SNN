@@ -7,29 +7,36 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Control Panel -->
-      <div class="col-sm-3 controlPanel">
-        <button class="btn btn-primary" onclick="addNode()">
-          Add Node
-        </button>
-        <button class="btn btn-danger" onclick="printLayers()">Print Layers</button>
-
-        <form class="form-inline" id="connectNodes">
-          <div class="form-group">
-            <label for="startNode">Start Node</label>
-            <input type="text" class="form-control" id="startNode" placeholder="N0">
-          </div>
-          <div class="form-group">
-            <label for="endNode">Start Node</label>
-            <input type="text" class="form-control" id="endNode" placeholder="N1">
-          </div>
-        </form>
-          <button class="btn btn-warning" onclick="connectNodes()">Connect Nodes</button>
-      </div>
     <!-- Canvas -->
-    <div class="col-sm-9">
-      <canvas id="canvas" height="300" width="600"></canvas>
+    <div class="col-sm-12">
+      <canvas id="canvas" height="500" width="800"></canvas>
     </div>
+    <!-- Control Panel -->
+      <div class="col-sm-12">
+        <div class="col-sm-2"></div>
+        <!-- 1st Half -->
+        <div class="col-sm-4 controlPanel">
+          <button class="btn btn-primary" onclick="addNode()">
+            Add Node
+          </button>
+          <button class="btn btn-danger" onclick="printLayers()">Print Layers</button>
+
+          <form class="form-inline" id="connectNodes">
+            <div class="form-group">
+              <label for="startNode">Start Node</label>
+              <input type="text" class="form-control" id="startNode" placeholder="0">
+            </div>
+            <div class="form-group">
+              <label for="endNode">Start Node</label>
+              <input type="text" class="form-control" id="endNode" placeholder="1">
+            </div>
+          </form>
+            <button class="btn btn-warning" onclick="connectNodes()">Connect Nodes</button>
+        </div>
+        <!-- Second Half -->
+        <div class="col-sm-4 controlPanel"></div>
+        <div class="col-sm-2"></div>
+      </div>
 
   <script src="bower_components/jquery/dist/jquery.min.js"></script>
   <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
