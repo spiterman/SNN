@@ -14,8 +14,6 @@ function distance(x1, y1, x2, y2) {
   return Math.sqrt(Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2));
 }
 
-console.log(distance(0, 0, 3, 4))
-
 function isValidPosition(x1, y1){
   var layers = canvas.getLayers((layer) => layer.type === 'arc');
 
@@ -81,10 +79,10 @@ function connectNodes(){
 
   //Selects the Node layers
   var start = canvas.getLayers(function(l){
-    return (l.name === startNode.val());
+    return (l.name === 'N' + startNode.val());
   })[0];
   var finish = canvas.getLayers(function(l){
-    return (l.name === endNode.val());
+    return (l.name === 'N' + endNode.val());
   })[0];
 
   if(!start || !finish){
