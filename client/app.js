@@ -3,40 +3,71 @@ var counter = 0;
 var connectionStarted = false;
 const neuronRadius = 25;
 const neuronStrokeWidth = 4;
+const neuronDistance = 3;
 const height = canvas.height();
 const width = canvas.width();
+const maxNeurons  = 30;
+
+//Helper Function
+
+function distance(x1, y1, x2, y2) {
+  return Math.sqrt(Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2));
+}
+
+console.log(distance(0, 0, 3, 4))
+
+function isValidPosition(x1, y1){
+  var layers = canvas.getLayers((layer) => layer.type === 'arc');
+
+  for(var i = 0; i < layers.length; i++){
+    if(distance(x1, y1, layers[i].x, layers[i].y) < neuronDistance * neuronRadius){
+      return false;
+    }
+  }
+  return true;
+}
+
+//Main Functions
 
 function addNode() {
-  var x_coord = neuronRadius + Math.floor(Math.random() * (width - 2*neuronRadius - neuronStrokeWidth));
-  var y_coord = neuronRadius + Math.floor(Math.random() * (height - 2*neuronRadius - neuronStrokeWidth));
+  if(counter <= maxNeurons ){
+    var x_coord = neuronRadius + Math.floor(Math.random() * (width - 2*neuronRadius - neuronStrokeWidth));
+    var y_coord = neuronRadius + Math.floor(Math.random() * (height - 2*neuronRadius - neuronStrokeWidth));
 
-  var n = 'N' + counter;
-  canvas.addLayer({
-    type: 'arc',
-    draggable: true,
-    strokeStyle: '#000',
-    strokeWidth: neuronStrokeWidth,
-    fillStyle: 'red',
-    groups: [n],
-    dragGroups: [n],
-    name: n,
-    x: x_coord,
-    y: y_coord,
-    radius: neuronRadius
-  })
-  .addLayer({
-    type: 'text',
-    draggable: true,
-    groups: [n],
-    dragGroups: [n],
-    strokeStyle: "#000",
-    strokeWidth: 3,
-    text: n,
-    x: x_coord ,
-    y: y_coord
-  })
-  .drawLayers();
-  counter++;
+    if(isValidPosition(x_coord, y_coord)){
+      var n = 'N' + counter;
+      canvas.addLayer({
+        type: 'arc',
+        // draggable: true,
+        strokeStyle: '#000',
+        strokeWidth: neuronStrokeWidth,
+        fillStyle: 'red',
+        groups: [n],
+        // dragGroups: [n],
+        name: n,
+        x: x_coord,
+        y: y_coord,
+        radius: neuronRadius
+      })
+      .addLayer({
+        type: 'text',
+        // draggable: true,
+        groups: [n],
+        // dragGroups: [n],
+        strokeStyle: "#000",
+        strokeWidth: 3,
+        text: n,
+        x: x_coord ,
+        y: y_coord
+      })
+      .drawLayers();
+      counter++;
+    } else {
+      addNode();
+    }
+  } else {
+    alert('Maximum number of neurons reached!')
+  }
 }
 
 function printLayers(){
@@ -79,7 +110,7 @@ function connectNodes(){
 
   //Draws the arrow between
   canvas.drawLine({
-    draggable: true,
+    // draggable: true,
     layer: true,
     // groups: ['N0','N1'],
     strokeStyle: '#0000ff',
