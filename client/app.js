@@ -1,12 +1,32 @@
 const canvas = $('#canvas');
-var counter = 0;
-var connectionStarted = false;
 const neuronRadius = 25;
 const neuronStrokeWidth = 4;
 const neuronDistance = 3;
 const height = canvas.height();
 const width = canvas.width();
 const maxNeurons  = 30;
+const activeColor = "yellow";
+const inactiveColor = "red"
+
+var counter = 0;
+
+//Establish Matrix
+var connectivityMatrix = {};
+
+connectivityMatrix.values = [];
+
+connectivityMatrix.addNode = function(){
+  connectivityMatrix.values.forEach((item) => item.push(0));
+  connectivityMatrix.values.push(new Array(counter + 1).fill(0));
+  console.log(connectivityMatrix.values)
+}
+
+connectivityMatrix.connectNodes = function(start, end) {
+  console.log(connectivityMatrix.values)
+  connectivityMatrix.values[end][start] = 1;
+  console.log(connectivityMatrix.values);
+}
+
 
 //Helper Function
 
@@ -29,6 +49,9 @@ function isValidPosition(x1, y1){
 
 function addNode() {
   if(counter <= maxNeurons ){
+
+    connectivityMatrix.addNode();
+
     var x_coord = neuronRadius + Math.floor(Math.random() * (width - 2*neuronRadius - neuronStrokeWidth));
     var y_coord = neuronRadius + Math.floor(Math.random() * (height - 2*neuronRadius - neuronStrokeWidth));
 
@@ -39,7 +62,7 @@ function addNode() {
         // draggable: true,
         strokeStyle: '#000',
         strokeWidth: neuronStrokeWidth,
-        fillStyle: 'red',
+        fillStyle: inactiveColor,
         groups: [n],
         // dragGroups: [n],
         name: n,
@@ -91,6 +114,12 @@ function connectNodes(){
     alert("Invalid Nodes!");
     return
   }
+
+  //Connectivity matrix
+  // console.log(start)
+  // console.log(finish)
+  connectivityMatrix.connectNodes(startNode.val(), endNode.val())
+
   //Account for Neuron Radius
   var ratio = ((finish.y - start.y)/(finish.x - start.x))
   var theta = Math.atan(ratio)
@@ -124,6 +153,7 @@ function connectNodes(){
   startNode.val("");
   endNode.val("");
 }
+
 
 
 
