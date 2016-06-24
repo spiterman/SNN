@@ -24,7 +24,6 @@ connectivityMatrix.addNode = function(){
 
 connectivityMatrix.connectNodes = function(start, end) {
   connectivityMatrix.values[end][start] = 1;
-  console.log(connectivityMatrix.values)
 }
 
 //State Vector Function
@@ -59,7 +58,6 @@ stateVector.moveToNextState = function(){
     columnIndex++;
   })
 
-  console.log(newValues)
   stateVector.values = newValues;
   drawUpdatedNodes();
 }
