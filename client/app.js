@@ -7,8 +7,10 @@ const width = canvas.width();
 const maxNeurons  = 30;
 const activeColor = "yellow";
 const inactiveColor = "red"
+const simulationSpeed = 2000;
 
 var counter = 0;
+var isSimulationRunning = false;
 
 //Connectivity Matrix Functions
 var connectivityMatrix = {};
@@ -31,12 +33,32 @@ stateVector.values = [];
 stateVector.addNode = function(){
   stateVector.values.push(0);
 }
-stateVector.updateState = function(layer){
+stateVector.clickUpdateState = function(layer){
   if(layer.data.active){
     stateVector.values[layer.data.index] = 1;
   } else {
-    stateVector.values[layer.date.index] = 0;
+    stateVector.values[layer.data.index] = 0;
   }
+}
+
+stateVector.moveToNextState = function(){
+  var columnIndex = 0, rowIndex = 0;
+  var newValues = new Array(connectivityMatrix.values.length).fill(0);
+
+  //Matrix Multiplication
+  stateVector.values.forEach((item) => {
+    if(item){
+      for(rowIndex; rowIndex < connectivityMatrix.values.length; rowIndex++){
+        if(connectivityMatrix.values[rowIndex][columnIndex]){
+          newValues[rowIndex] = 1;
+        }
+      }
+    }
+    columnIndex++;
+  })
+
+  stateVector.values = newValues;
+  drawUpdatedNodes();
 }
 
 
@@ -60,6 +82,7 @@ function isValidPosition(x1, y1){
 
 //Drawing Functions
 
+//Draws a new node
 function drawNewNode() {
     var x_coord = neuronRadius + Math.floor(Math.random() * (width - 2*neuronRadius - neuronStrokeWidth));
     var y_coord = neuronRadius + Math.floor(Math.random() * (height - 2*neuronRadius - neuronStrokeWidth));
@@ -80,7 +103,7 @@ function drawNewNode() {
         radius: neuronRadius,
         click: function(layer) {
           toggleNodeColor(layer);
-          stateVector.updateState(layer);
+          stateVector.clickUpdateState(layer);
         },
         data: {
           active: false,
@@ -134,6 +157,7 @@ function drawNewConnection(start, finish) {
   })
 }
 
+//Used for clicking a node on or off
 function toggleNodeColor(layer){
   if(!layer.data.active){
     canvas.setLayer(layer, {
@@ -146,6 +170,30 @@ function toggleNodeColor(layer){
   }
   canvas.drawLayers()
   layer.data.active = !layer.data.active;
+}
+
+//Sets a node color, and status
+function setNodeColor(layer, status){
+  if(status){
+    canvas.setLayer(layer, {
+      fillStyle: activeColor
+    })
+    layer.data.active = true;
+  } else {
+    canvas.setLayer(layer, {
+      fillStyle: inactiveColor
+    });
+    layer.data.active = false;
+  }
+}
+
+//Draws all the updated notes from the state vector
+function drawUpdatedNodes(){
+  for(var i = 0; i < stateVector.values.length; i++){
+    var layer = canvas.getLayer('N' + i);
+    setNodeColor(layer,stateVector.values[i]);
+  }
+  canvas.drawLayers();
 }
 
 //Main Functions
@@ -189,6 +237,24 @@ function connectNodes(){
   // Clear input fields
   startNode.val("");
   endNode.val("");
+}
+
+function simulate() {
+  if(isSimulationRunning){
+    stateVector.moveToNextState();
+    setTimeout(function(){
+      simulate();
+    }, simulationSpeed)
+  }
+}
+
+function runSimulation(){
+  isSimulationRunning = true;
+  simulate();
+}
+
+function endSimulation() {
+  isSimulationRunning = false;
 }
 
 function printLayers(){
