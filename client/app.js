@@ -10,7 +10,7 @@ const inactiveColor = "red"
 
 var counter = 0;
 
-//Establish Matrix
+//Connectivity Matrix Functions
 var connectivityMatrix = {};
 
 connectivityMatrix.values = [];
@@ -18,17 +18,22 @@ connectivityMatrix.values = [];
 connectivityMatrix.addNode = function(){
   connectivityMatrix.values.forEach((item) => item.push(0));
   connectivityMatrix.values.push(new Array(counter + 1).fill(0));
-  console.log(connectivityMatrix.values)
 }
 
 connectivityMatrix.connectNodes = function(start, end) {
-  console.log(connectivityMatrix.values)
   connectivityMatrix.values[end][start] = 1;
-  console.log(connectivityMatrix.values);
+}
+
+//State Vector Function
+
+var stateVector = {};
+stateVector.values = [];
+stateVector.updateStateVector = function(layer){
+
 }
 
 
-//Helper Function
+//Drawing Helper Function
 
 function distance(x1, y1, x2, y2) {
   return Math.sqrt(Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2));
@@ -45,13 +50,10 @@ function isValidPosition(x1, y1){
   return true;
 }
 
-//Main Functions
 
-function addNode() {
-  if(counter <= maxNeurons ){
+//Drawing Functions
 
-    connectivityMatrix.addNode();
-
+function drawNewNode() {
     var x_coord = neuronRadius + Math.floor(Math.random() * (width - 2*neuronRadius - neuronStrokeWidth));
     var y_coord = neuronRadius + Math.floor(Math.random() * (height - 2*neuronRadius - neuronStrokeWidth));
 
@@ -68,7 +70,15 @@ function addNode() {
         name: n,
         x: x_coord,
         y: y_coord,
-        radius: neuronRadius
+        radius: neuronRadius,
+        click: function(layer) {
+          toggleNodeColor(layer);
+          stateVector.updateStateVector(layer);
+        },
+        data: {
+          active: false,
+          index: counter
+        }
       })
       .addLayer({
         type: 'text',
@@ -84,15 +94,62 @@ function addNode() {
       .drawLayers();
       counter++;
     } else {
-      addNode();
+      drawNewNode();
     }
+}
+
+function drawNewConnection(start, finish) {
+  //Account for Neuron Radius
+  var ratio = ((finish.y - start.y)/(finish.x - start.x))
+  var theta = Math.atan(ratio)
+  if(finish.x <= start.x) {
+    var x1 = start.x - Math.cos(theta) * neuronRadius;
+    var y1 = start.y - Math.sin(theta) * neuronRadius;
+    var x2 = finish.x + Math.cos(theta) * neuronRadius;
+    var y2 = finish.y + Math.sin(theta) * neuronRadius;
+  } else {
+    var x1 = start.x + Math.cos(theta) * neuronRadius;
+    var y1 = start.y + Math.sin(theta) * neuronRadius;
+    var x2 = finish.x - Math.cos(theta) * neuronRadius;
+    var y2 = finish.y - Math.sin(theta) * neuronRadius;
+  }
+
+  //Draws the arrow between
+  canvas.drawLine({
+    layer: true,
+    strokeStyle: '#0000ff',
+    strokeWidth: 4,
+    endArrow: true,
+    arrowRadius: 15,
+    arrowAngle: 90,
+    x1: x1, y1: y1,
+    x2: x2, y2: y2
+  })
+}
+
+function toggleNodeColor(layer){
+  if(!layer.data.active){
+    canvas.setLayer(layer, {
+      fillStyle: activeColor
+    });
+  } else {
+    canvas.setLayer(layer, {
+      fillStyle: inactiveColor
+    });
+  }
+  canvas.drawLayers()
+  layer.data.active = !layer.data.active;
+}
+
+//Main Functions
+
+function addNode() {
+  if(counter <= maxNeurons ){
+    connectivityMatrix.addNode();
+    drawNewNode();
   } else {
     alert('Maximum number of neurons reached!')
   }
-}
-
-function printLayers(){
-  console.log(canvas.getLayers());
 }
 
 function connectNodes(){
@@ -115,43 +172,19 @@ function connectNodes(){
     return
   }
 
-  //Connectivity matrix
-  // console.log(start)
-  // console.log(finish)
+  //Connectivity matrix update
   connectivityMatrix.connectNodes(startNode.val(), endNode.val())
 
-  //Account for Neuron Radius
-  var ratio = ((finish.y - start.y)/(finish.x - start.x))
-  var theta = Math.atan(ratio)
-  if(finish.x <= start.x) {
-    var x1 = start.x - Math.cos(theta) * neuronRadius;
-    var y1 = start.y - Math.sin(theta) * neuronRadius;
-    var x2 = finish.x + Math.cos(theta) * neuronRadius;
-    var y2 = finish.y + Math.sin(theta) * neuronRadius;
-  } else {
-    var x1 = start.x + Math.cos(theta) * neuronRadius;
-    var y1 = start.y + Math.sin(theta) * neuronRadius;
-    var x2 = finish.x - Math.cos(theta) * neuronRadius;
-    var y2 = finish.y - Math.sin(theta) * neuronRadius;
-  }
-
-  //Draws the arrow between
-  canvas.drawLine({
-    // draggable: true,
-    layer: true,
-    // groups: ['N0','N1'],
-    strokeStyle: '#0000ff',
-    strokeWidth: 4,
-    endArrow: true,
-    arrowRadius: 15,
-    arrowAngle: 90,
-    x1: x1, y1: y1,
-    x2: x2, y2: y2
-  })
+  //Draw new connection
+  drawNewConnection(start, finish);
 
   // Clear input fields
   startNode.val("");
   endNode.val("");
+}
+
+function printLayers(){
+  console.log(canvas.getLayers());
 }
 
 
