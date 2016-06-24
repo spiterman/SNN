@@ -28,8 +28,15 @@ connectivityMatrix.connectNodes = function(start, end) {
 
 var stateVector = {};
 stateVector.values = [];
-stateVector.updateStateVector = function(layer){
-
+stateVector.addNode = function(){
+  stateVector.values.push(0);
+}
+stateVector.updateState = function(layer){
+  if(layer.data.active){
+    stateVector.values[layer.data.index] = 1;
+  } else {
+    stateVector.values[layer.date.index] = 0;
+  }
 }
 
 
@@ -73,7 +80,7 @@ function drawNewNode() {
         radius: neuronRadius,
         click: function(layer) {
           toggleNodeColor(layer);
-          stateVector.updateStateVector(layer);
+          stateVector.updateState(layer);
         },
         data: {
           active: false,
@@ -146,6 +153,7 @@ function toggleNodeColor(layer){
 function addNode() {
   if(counter <= maxNeurons ){
     connectivityMatrix.addNode();
+    stateVector.addNode();
     drawNewNode();
   } else {
     alert('Maximum number of neurons reached!')
