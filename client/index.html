@@ -34,8 +34,26 @@
             <button class="btn btn-warning" onclick="connectNodes()">Connect Nodes</button>
         </div>
         <!-- Second Half -->
-        <div class="col-sm-4 controlPanel"></div>
         <div class="col-sm-2"></div>
+
+        <div class="col-sm-4 controlPanel">
+          <button class="btn btn-primary" onclick="runSimulation()">
+            Run Simulation
+          </button>
+          <button class="btn btn-danger" onclick="endSimulation()">End Simulation</button>
+
+<!--           <form class="form-inline" id="connectNodes">
+            <div class="form-group">
+              <label for="startNode">Start Node</label>
+              <input type="text" class="form-control" id="startNode" placeholder="example: 0">
+            </div>
+            <div class="form-group">
+              <label for="endNode">Start Node</label>
+              <input type="text" class="form-control" id="endNode" placeholder="example: 1">
+            </div>
+          </form>
+            <button class="btn btn-warning" onclick="connectNodes()">Connect Nodes</button> -->
+        </div>
       </div>
 
   <script src="bower_components/jquery/dist/jquery.min.js"></script>
