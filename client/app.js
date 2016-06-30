@@ -104,21 +104,12 @@ function drawNewNode(e) {
         x: x_coord,
         y: y_coord,
         radius: neuronRadius,
-        dragging: false,
         dblclick: function(layer) {
-          if(!layer.dragging){
             toggleNodeColor(layer);
             stateVector.clickUpdateState(layer);
-          }
-        },
-        dragstart: function(layer){
-          layer.dragging = true;
-        },
-        drag: function(layer){
-          layer.dragging = true;
         },
         dragstop: function(layer){
-          layer.dragging = false;
+          redrawConnections(layer);
         },
         data: {
           active: false,
@@ -171,8 +162,26 @@ function drawNewConnection(start, finish) {
     arrowRadius: 15,
     arrowAngle: 90,
     x1: x1, y1: y1,
-    x2: x2, y2: y2
+    x2: x2, y2: y2,
+    name: start.name + finish.name,
+    data: {
+      start: start.name,
+      finish: finish.name
+    }
+    // dblclick: function(layer){
+    //   console.log(layer.data.start, layer.data.finish)
+    // }
   })
+}
+
+function redrawConnections(layer){
+  //Find all lines where start or finish is the layer
+  //Erases those lines
+  canvas
+    .getLayers((l) => l.data.start === layer.name ||
+                      l.data.finish === layer.name)
+    .forEach((item) => canvas.removeLayer(item.name));
+  canvas.drawLayers()
 }
 
 //Used for clicking a node on or off
