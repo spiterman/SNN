@@ -11,6 +11,8 @@ const simulationSpeed = 2000;
 
 var counter = 0;
 var isSimulationRunning = false;
+var mouseIsMoving = false;
+var clickOnCanvas = true;
 
 //Connectivity Matrix Functions
 var connectivityMatrix = {};
@@ -84,27 +86,29 @@ function isValidPosition(x1, y1){
 //Drawing Functions
 
 //Draws a new node
-function drawNewNode() {
-    var x_coord = neuronRadius + Math.floor(Math.random() * (width - 2*neuronRadius - neuronStrokeWidth));
-    var y_coord = neuronRadius + Math.floor(Math.random() * (height - 2*neuronRadius - neuronStrokeWidth));
+function drawNewNode(e) {
 
-    if(isValidPosition(x_coord, y_coord)){
+    var x_coord = e.offsetX;
+    var y_coord = e.offsetY;
+
       var n = 'N' + counter;
       canvas.addLayer({
         type: 'arc',
-        // draggable: true,
+        draggable: true,
         strokeStyle: '#000',
         strokeWidth: neuronStrokeWidth,
         fillStyle: inactiveColor,
         groups: [n],
-        // dragGroups: [n],
+        dragGroups: [n],
         name: n,
         x: x_coord,
         y: y_coord,
         radius: neuronRadius,
         click: function(layer) {
+          clickOnCanvas = false;
           toggleNodeColor(layer);
           stateVector.clickUpdateState(layer);
+          clickOnCanvas = true;
         },
         data: {
           active: false,
@@ -113,9 +117,9 @@ function drawNewNode() {
       })
       .addLayer({
         type: 'text',
-        // draggable: true,
+        draggable: true,
         groups: [n],
-        // dragGroups: [n],
+        dragGroups: [n],
         strokeStyle: "#000",
         strokeWidth: 3,
         text: n,
@@ -124,11 +128,9 @@ function drawNewNode() {
       })
       .drawLayers();
       counter++;
-    } else {
-      drawNewNode();
-    }
 }
 
+//Draws a connection between Nodes
 function drawNewConnection(start, finish) {
   //Account for Neuron Radius
   var ratio = ((finish.y - start.y)/(finish.x - start.x))
@@ -199,11 +201,21 @@ function drawUpdatedNodes(){
 
 //Main Functions
 
-function addNode() {
+canvas.click(function(e) {
+  var layers = canvas.getLayers();
+  for(var i = 0; i < layers.length; i++){
+    if(distance(e.offsetX, e.offsetY, layers[i].x, layers[i].y) < neuronRadius){
+      return
+      }
+    }
+    addNode(e)
+})
+
+function addNode(e) {
   if(counter <= maxNeurons ){
     connectivityMatrix.addNode();
     stateVector.addNode();
-    drawNewNode();
+    drawNewNode(e);
   } else {
     alert('Maximum number of neurons reached!')
   }
@@ -261,7 +273,3 @@ function endSimulation() {
 function printLayers(){
   console.log(canvas.getLayers());
 }
-
-
-
-
