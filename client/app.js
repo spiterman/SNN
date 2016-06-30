@@ -104,11 +104,21 @@ function drawNewNode(e) {
         x: x_coord,
         y: y_coord,
         radius: neuronRadius,
-        click: function(layer) {
-          clickOnCanvas = false;
-          toggleNodeColor(layer);
-          stateVector.clickUpdateState(layer);
-          clickOnCanvas = true;
+        dragging: false,
+        dblclick: function(layer) {
+          if(!layer.dragging){
+            toggleNodeColor(layer);
+            stateVector.clickUpdateState(layer);
+          }
+        },
+        dragstart: function(layer){
+          layer.dragging = true;
+        },
+        drag: function(layer){
+          layer.dragging = true;
+        },
+        dragstop: function(layer){
+          layer.dragging = false;
         },
         data: {
           active: false,
@@ -124,7 +134,12 @@ function drawNewNode(e) {
         strokeWidth: 3,
         text: n,
         x: x_coord ,
-        y: y_coord
+        y: y_coord,
+        dblclick: function(layer){
+          var node = canvas.getLayers((l) => l.name  === layer.text)[0];
+          toggleNodeColor(node);
+          stateVector.clickUpdateState(node);
+        }
       })
       .drawLayers();
       counter++;
