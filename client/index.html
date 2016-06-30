@@ -7,43 +7,35 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Click on a node to activate it!</h1>
+  <h3>Click on the canvas to create a node</h3>
+  <h3>Double click to activate/deactivate it</h3>
+  <h3>Connect the nodes and watch the simulation run!</h3>
     <!-- Canvas -->
-    <div class="col-sm-12">
+    <div class="col-sm-6">
       <canvas id="canvas" height="500" width="800"></canvas>
     </div>
     <!-- Control Panel -->
-      <div class="col-sm-12">
-        <div class="col-sm-2"></div>
-        <!-- 1st Half -->
-        <div class="col-sm-4 controlPanel">
-<!--           <button class="btn btn-primary" onclick="addNode()">
-            Add Node
-          </button> -->
-          <button class="btn btn-danger" onclick="printLayers()">Print Layers</button>
-
-          <form class="form-inline" id="connectNodes">
-            <div class="form-group">
-              <label for="startNode">Start Node</label>
-              <input type="text" class="form-control" id="startNode" placeholder="example: 0">
-            </div>
-            <div class="form-group">
-              <label for="endNode">Start Node</label>
-              <input type="text" class="form-control" id="endNode" placeholder="example: 1">
-            </div>
-          </form>
-            <button class="btn btn-warning" onclick="connectNodes()">Connect Nodes</button>
+    <div class="col-sm-6 controlPanel">
+      <form class="form-inline" id="connectNodes">
+        <div class="form-group">
+          <label for="startNode">Start Node</label>
+          <input type="text" class="form-control" id="startNode" placeholder="example: 0">
         </div>
-        <!-- Second Half -->
-        <div class="col-sm-2"></div>
-
-        <div class="col-sm-4 controlPanel">
-          <button class="btn btn-primary" onclick="runSimulation()">
-            Run Simulation
-          </button>
-          <button class="btn btn-danger" onclick="endSimulation()">End Simulation</button>
+        <div class="form-group">
+          <label for="endNode">Start Node</label>
+          <input type="text" class="form-control" id="endNode" placeholder="example: 1">
         </div>
-      </div>
+        <button class="btn btn-warning" onclick="connectNodes()" type="button">
+        Connect Nodes
+        </button>
+        <button class="btn btn-primary" onclick="runSimulation()" type="button">
+          Run Simulation
+        </button>
+        <button class="btn btn-danger" onclick="endSimulation()" type="button">
+        End Simulation
+        </button>
+      </form>
+    </div>
 
   <script src="bower_components/jquery/dist/jquery.min.js"></script>
   <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
