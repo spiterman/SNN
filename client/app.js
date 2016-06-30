@@ -130,6 +130,9 @@ function drawNewNode(e) {
           var node = canvas.getLayers((l) => l.name  === layer.text)[0];
           toggleNodeColor(node);
           stateVector.clickUpdateState(node);
+        },
+        dragstop: function(layer){
+          redrawConnections(canvas.getLayer(layer.text));
         }
       })
       .drawLayers();
@@ -168,9 +171,6 @@ function drawNewConnection(start, finish) {
       start: start.name,
       finish: finish.name
     }
-    // dblclick: function(layer){
-    //   console.log(layer.data.start, layer.data.finish)
-    // }
   })
 }
 
@@ -181,7 +181,25 @@ function redrawConnections(layer){
     .getLayers((l) => l.data.start === layer.name ||
                       l.data.finish === layer.name)
     .forEach((item) => canvas.removeLayer(item.name));
-  canvas.drawLayers()
+  canvas.drawLayers();
+
+  //Using connectivity matrix, redraw nodes
+  var ind = layer.data.index
+
+  //Redraws all vectors leaving the dragged node
+  for(var i = 0; i < connectivityMatrix.values.length; i++) {
+    if(connectivityMatrix.values[i][ind]) {
+      drawNewConnection(canvas.getLayer('N' + ind), canvas.getLayer('N' + i))
+    }
+  }
+
+  //Redraws all vectors arriving at the dragged node
+  for(var j = 0; j < connectivityMatrix.values.length; j++) {
+    if(connectivityMatrix.values[ind][j]){
+      drawNewConnection(canvas.getLayer('N' + j), canvas.getLayer('N' + ind))
+    }
+  }
+  canvas.drawLayers();
 }
 
 //Used for clicking a node on or off
