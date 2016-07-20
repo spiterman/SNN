@@ -44,13 +44,16 @@ connectivityMatrix.disconnectNodes = function(start, end){
 var stateVector = {};
 stateVector.values = [];
 stateVector.addNode = function(){
-  stateVector.values.push(0);
+  stateVector.values.push({
+    value: 0,
+    type: currentNodeType
+  });
 }
 stateVector.clickUpdateState = function(layer){
   if(layer.data.active){
-    stateVector.values[layer.data.index] = 1;
+    stateVector.values[layer.data.index].value = 1;
   } else {
-    stateVector.values[layer.data.index] = 0;
+    stateVector.values[layer.data.index].value = 0;
   }
 }
 
@@ -60,7 +63,7 @@ stateVector.moveToNextState = function(){
 
   //Matrix Multiplication
   stateVector.values.forEach((item) => {
-    if(item){
+    if(item.value){
       for(rowIndex; rowIndex < connectivityMatrix.values.length; rowIndex++){
         if(connectivityMatrix.values[rowIndex][columnIndex]){
           newValues[rowIndex] = 1;
@@ -71,7 +74,11 @@ stateVector.moveToNextState = function(){
     columnIndex++;
   })
 
-  stateVector.values = newValues;
+  for(var i = 0; i < newValues.length; i++){
+    stateVector.values[i].value = newValues[i];
+  }
+
+  // stateVector.values = newValues;
   drawUpdatedNodes();
 }
 
@@ -247,7 +254,7 @@ function setNodeColor(layer, status){
 function drawUpdatedNodes(){
   for(var i = 0; i < stateVector.values.length; i++){
     var layer = canvas.getLayer('N' + i);
-    setNodeColor(layer,stateVector.values[i]);
+    setNodeColor(layer,stateVector.values[i].value);
   }
   canvas.drawLayers();
 }
