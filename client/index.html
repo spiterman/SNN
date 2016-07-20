@@ -22,12 +22,19 @@
           <input type="text" class="form-control" id="startNode" placeholder="example: 0">
         </div>
         <div class="form-group">
-          <label for="endNode">Start Node</label>
+          <label for="endNode">End Node</label>
           <input type="text" class="form-control" id="endNode" placeholder="example: 1">
         </div>
-        <button class="btn btn-warning" onclick="connectNodes()" type="button">
-        Connect Nodes
-        </button>
+        <div class="btn-group-vertical">
+          <button class="btn btn-warning" onclick="updateConnections('connect')" type="button">
+          Connect Nodes
+          </button>
+          <button class="btn btn-danger" type="button" onclick="updateConnections('disconnect')">
+            Disconnect Nodes
+          </button>
+
+        </div>
+
         <button class="btn btn-primary" onclick="runSimulation()" type="button">
           Run Simulation
         </button>
