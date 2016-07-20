@@ -13,6 +13,9 @@ var counter = 0;
 var isSimulationRunning = false;
 var mouseIsMoving = false;
 var clickOnCanvas = true;
+var currentNodeType = "connection"
+
+
 
 //Connectivity Matrix Functions
 var connectivityMatrix = {};
@@ -312,6 +315,15 @@ function endSimulation() {
   isSimulationRunning = false;
 }
 
-function printLayers(){
+function printLayers() {
   console.log(canvas.getLayers());
+}
+
+function setNodeType(str) {
+  var nodeTypes = [$('#input'), $('#connection'), $('#output')]
+  nodeTypes.forEach(function(item){
+    item.removeClass('active');
+  });
+  $('#' + str).addClass('active');
+  currentNodeType = str;
 }
