@@ -34,7 +34,13 @@
         <button class="btn btn-danger" onclick="endSimulation()" type="button">
         End Simulation
         </button>
+
       </form>
+      <div class="btn-group-vertical">
+        <button type="button" class="btn btn-primary active" id="connection" onclick="setNodeType('connection')">Connection</button>
+        <button type="button" class="btn btn-primary" id="input" onclick="setNodeType('input')">Input</button>
+        <button type="button" class="btn btn-primary" id="output" onclick="setNodeType('output')">Output</button>
+      </div>
     </div>
 
   <script src="bower_components/jquery/dist/jquery.min.js"></script>
