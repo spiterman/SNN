@@ -27,8 +27,16 @@ connectivityMatrix.addNode = function(){
   connectivityMatrix.values.push(new Array(counter + 1).fill(0));
 }
 
+connectivityMatrix.deleteNode = function(n) {
+  // Stub
+}
+
 connectivityMatrix.connectNodes = function(start, end) {
   connectivityMatrix.values[end][start] = 1;
+}
+
+connectivityMatrix.disconnectNodes = function(start, end){
+  connectivityMatrix.values[end][start] = 0;
 }
 
 //State Vector Function
@@ -266,7 +274,7 @@ function addNode(e) {
   }
 }
 
-function connectNodes(){
+function updateConnections(str){
   //Retrive Nodes to connect
   const startNode = $('#startNode');
   const endNode = $('#endNode');
@@ -286,11 +294,22 @@ function connectNodes(){
     return
   }
 
-  //Connectivity matrix update
-  connectivityMatrix.connectNodes(startNode.val(), endNode.val())
-
+  if(str === "connect"){
+  //Connectivity Matrix Update
+    connectivityMatrix.connectNodes(startNode.val(), endNode.val());
   //Draw new connection
-  drawNewConnection(start, finish);
+    drawNewConnection(start, finish);
+  }
+  if(str === "disconnect"){
+  //Connectivity Matrix Update
+    connectivityMatrix.disconnectNodes(startNode.val(), endNode.val());
+  //Erase connection
+  var arrowToDelete = (canvas.getLayers((layer)=> layer.name === start.name + finish.name))[0];
+  // canvas.deleteLayer(arrowToDelete)
+  canvas
+    .removeLayer(arrowToDelete)
+    .drawLayers()
+  }
 
   // Clear input fields
   startNode.val("");
