@@ -48,6 +48,11 @@
         <button type="button" class="btn btn-primary" id="input" onclick="setNodeType('input')">Input</button>
         <button type="button" class="btn btn-primary" id="output" onclick="setNodeType('output')">Output</button>
       </div>
+      <div class="btn-group-vertical">
+        <label for="">Double click to activate or delete nodes</label>
+        <button type="button" class="btn btn-primary active" id="activateNodes" onclick="setDblClickAction('activateNodes')">Activate Nodes</button>
+        <button type="button" class="btn btn-danger" id="deleteNodes" onclick="setDblClickAction('deleteNodes')">Delete Nodes</button>
+      </div>
     </div>
 
   <script src="bower_components/jquery/dist/jquery.min.js"></script>
