@@ -89,6 +89,8 @@ stateVector.moveToNextState = function(){
     stateVector.values[i].value = newValues[i];
   }
 
+  runAnimations();
+
   drawUpdatedNodes();
 }
 
@@ -120,19 +122,36 @@ function drawNewNode(e) {
     var x_coord = e.offsetX;
     var y_coord = e.offsetY;
 
+    var type, sides, concavity, radius, fillStyle;
+
       var n = 'N' + counter;
+      if(currentNodeType === 'connection'){
+        type = 'arc';
+        radius = neuronRadius;
+        fillStyle = inactiveColor;
+      }
+      if(currentNodeType === 'output'){
+        type = 'polygon';
+        sides = 5;
+        concavity = 0.5;
+        radius = 2 * neuronRadius;
+        fillStyle = 'purple';
+
+      }
       canvas.addLayer({
-        type: 'arc',
+        type: type,
         draggable: true,
         strokeStyle: '#000',
         strokeWidth: neuronStrokeWidth,
-        fillStyle: inactiveColor,
+        fillStyle: fillStyle,
         groups: [n],
         dragGroups: [n],
         name: n,
         x: x_coord,
         y: y_coord,
-        radius: neuronRadius,
+        radius: radius,
+        concavity: concavity,
+        sides: sides,
         dblclick: function(layer) {
           console.log(layer)
           if(currentDblClickAction === "activateNodes"){
@@ -299,6 +318,18 @@ function drawUpdatedNodes(){
     }
   }
   canvas.drawLayers();
+}
+
+//Performs all the animations
+
+function runAnimations(){
+  stateVector.values.forEach((item, index) => {
+    if(item.type === "output" && item.value === 1){
+      canvas.animateLayer('N' + index, {
+        rotate: '+=180'
+      })
+    }
+  })
 }
 
 //Main Functions
