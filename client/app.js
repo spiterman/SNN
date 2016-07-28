@@ -429,3 +429,7 @@ setDblClickAction = function(str){
   $('#' + str).addClass('active');
   currentDblClickAction = str;
 }
+
+$(document).ready(function() {
+    $(".dropdown-toggle").dropdown();
+});
