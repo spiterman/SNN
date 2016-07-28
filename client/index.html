@@ -1,61 +1,121 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title></title>
-  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <h3>Click on the canvas to create a node</h3>
-  <h3>Double click to activate/deactivate it</h3>
-  <h3>Connect the nodes and watch the simulation run!</h3>
+  <head>
+    <title></title>
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css.map">
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <nav id="myNavbar" class="navbar navbar-inverse" role="navigation">
+        <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="container">
+        <div class="navbar-header navbar-right">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">SNN</a>
+        </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            <!-- Set Start and End Nodes -->
+            <li class="dropdown">
+              <div class="form-inline">
+                <div class="form-group">
+                  <label for="startNode" id="startNodeLabel">Start Node</label>
+                  <input type="text" class="form-control" id="startNode" placeholder="eg: 0">
+                </div>
+                <div class="form-group">
+                  <label for="startNode" id="endNodeLabel">End Node</label>
+                  <input type="text" class="form-control" id="endNode" placeholder="eg: 1">
+                </div>
+              </div>
+            </li>
+
+            <!-- Connect/Disconnect Buttons -->
+            <li class="dropdown">
+              <div>
+                <label for="" id="setConnections">Set connections</label>
+                <div class="btn-group-vertical">
+                  <button class="btn btn-default" onclick="updateConnections('connect')" type="button">
+                    Connect
+                  </button>
+                  <button class="btn btn-default" type="button" onclick="updateConnections('disconnect')">
+                    Disconnect
+                  </button>
+                </div>
+              </div>
+            </li>
+
+            <!-- Instructions -->
+            <li class="dropdown">
+              <a href="#" data-toggle="dropdown" class="dropdown-toggle">Instructions<b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">
+                  Hi! Welcome to my neuron simulator! <br>
+                  This program is designed to teach <br>
+                  people about how the brain processes <br>
+                  information. Start by clicking anywhere <br>
+                  on the canvas to create new neurons. <br>
+                  Then use the input fields to connect them. <br>
+                  Once the neurons are connected, run the <br>
+                  simulation and watch them fire! <br>
+                  Use the dropdowns to play around with <br>
+                  the neurons and see what you can create! <br>
+                </a></li>
+              </ul>
+            </li>
+
+            <!-- Set New Node Types -->
+            <li class="dropdown">
+              <a href="#" data-toggle="dropdown" class="dropdown-toggle">Node Type<b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="#" class="btn active" onclick="setNodeType('connection')" id="connection">Connector</a></li>
+                <li class="divider"></li>
+                <li><a href="#" class="btn" onclick="setNodeType('output')" id="output">Spinner</a></li>
+              </ul>
+            </li>
+
+            <!-- Set Double Click Action -->
+            <li class="dropdown">
+                <a href="#" data-toggle="dropdown" class="dropdown-toggle">Set Dbl Click<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    <li><a href="#" class="btn active" id="activateNodes" onclick="setDblClickAction('activateNodes')">Activate</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#" class="btn" id="deleteNodes" onclick="setDblClickAction('deleteNodes')">Delete</a></li>
+                </ul>
+            </li>
+
+            <!-- Simulation Control -->
+            <li class="dropdown">
+              <a href="#" data-toggle="dropdown" class="dropdown-toggle">Simulate<b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="#" class="btn" onclick="runSimulation()">Run</a></li>
+                <li class="divider"></li>
+                <li><a href="#" class="btn" onclick="endSimulation()">End</a></li>
+              </ul>
+            </li>
+          </ul>
+
+        </div><!-- /.navbar-collapse -->
+      </div>
+    </nav>
+
     <!-- Canvas -->
     <div class="col-sm-6">
       <canvas id="canvas" height="500" width="800"></canvas>
     </div>
-    <!-- Control Panel -->
-    <div class="col-sm-6 controlPanel">
-      <form class="form-inline" id="connectNodes">
-        <div class="form-group">
-          <label for="startNode">Start Node</label>
-          <input type="text" class="form-control" id="startNode" placeholder="example: 0">
-        </div>
-        <div class="form-group">
-          <label for="endNode">End Node</label>
-          <input type="text" class="form-control" id="endNode" placeholder="example: 1">
-        </div>
-        <div class="btn-group-vertical">
-          <button class="btn btn-warning" onclick="updateConnections('connect')" type="button">
-          Connect Nodes
-          </button>
-          <button class="btn btn-danger" type="button" onclick="updateConnections('disconnect')">
-            Disconnect Nodes
-          </button>
 
-        </div>
-
-        <button class="btn btn-primary" onclick="runSimulation()" type="button">
-          Run Simulation
-        </button>
-        <button class="btn btn-danger" onclick="endSimulation()" type="button">
-        End Simulation
-        </button>
-
-      </form>
-      <div class="btn-group-vertical">
-        <button type="button" class="btn btn-primary active" id="connection" onclick="setNodeType('connection')">Connection</button>
-        <button type="button" class="btn btn-primary" id="output" onclick="setNodeType('output')">Output</button>
-      </div>
-      <div class="btn-group-vertical">
-        <label for="">Double click to activate or delete nodes</label>
-        <button type="button" class="btn btn-primary active" id="activateNodes" onclick="setDblClickAction('activateNodes')">Activate Nodes</button>
-        <button type="button" class="btn btn-danger" id="deleteNodes" onclick="setDblClickAction('deleteNodes')">Delete Nodes</button>
-      </div>
-    </div>
 
   <script src="bower_components/jquery/dist/jquery.min.js"></script>
   <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
   <script src="bower_components/jcanvas/jcanvas.min.js"></script>
   <script src="app.js"></script>
 </body>
