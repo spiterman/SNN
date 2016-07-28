@@ -1,7 +1,7 @@
 html, body {
   height: 100%;
   width: 100%;
-  background-color: gray;
+  background-color: #eeeeee;
 }
 
 .controlPanel {
@@ -11,9 +11,16 @@ html, body {
 }
 
 canvas {
-  margin-top: 50px;
-  margin-left: 20px;
+  margin-top: -10px;
   display: inline;
   background-color: white;
+}
+
+#startNodeLabel, #endNodeLabel, #setConnections {
+  color: white;
+}
+
+input, label{
+  display: block;
 }
 
