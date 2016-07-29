@@ -17,6 +17,7 @@
   "dependencies": {
     "jquery": "^2.2.4",
     "bootstrap": "^3.3.6",
-    "jcanvas": "^15.12.12"
+    "jcanvas": "^15.12.12",
+    "underscore": "^1.8.3"
   }
 }
