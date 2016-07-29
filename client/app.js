@@ -1,6 +1,9 @@
+//***Globals***
 const canvas = $('#canvas');
 const neuronRadius = 25;
 const neuronStrokeWidth = 4;
+const textStrokeWidth = 3;
+const neuronStrokeStyle = 'black';
 const neuronDistance = 3;
 const height = canvas.height();
 const width = canvas.width();
@@ -8,17 +11,18 @@ const maxNeurons  = 30;
 const activeColor = "yellow";
 const inactiveColor = "red";
 const simulationSpeed = 2000;
+const spinnerConcavity = 0.5;
+const spinnerSides = 5;
 
 var counter = 0;
 var isSimulationRunning = false;
-var mouseIsMoving = false;
 var clickOnCanvas = true;
 var currentNodeType = "connection";
 var currentDblClickAction = "activateNodes";
 
 
 
-//Connectivity Matrix Functions
+//***Connectivity Matrix Functions***
 var connectivityMatrix = {};
 
 connectivityMatrix.values = [];
@@ -47,10 +51,10 @@ connectivityMatrix.disconnectNodes = function(start, end){
 }
 
 
-//State Vector Function
-
+//****State Vector Function***
 var stateVector = {};
 stateVector.values = [];
+
 stateVector.addNode = function(){
   stateVector.values.push({
     value: 0,
@@ -95,6 +99,50 @@ stateVector.moveToNextState = function(){
 }
 
 
+//***Properties of All Layer Types***
+
+var allNodes = {
+  strokeWidth: neuronStrokeWidth,
+  strokeStyle: neuronStrokeStyle,
+  draggable: true,
+  dragstop: redrawConnections,
+  dblclick: dblClickFunction
+}
+
+var connectionNodes = {
+  type: 'arc',
+  radius: neuronRadius,
+  fillStyle: inactiveColor
+}
+
+var spinnerNodes = {
+  type: 'polygon',
+  radius: neuronRadius * 2,
+  fillStyle: inactiveColor,
+  concavity: spinnerConcavity,
+  sides: spinnerSides
+}
+
+var allTextNodes = {
+  type: 'text',
+  draggable: true,
+  strokeStyle: neuronStrokeStyle,
+  strokeWidth: textStrokeWidth,
+  dblclick: dblClickFunction,
+  dragstop: function(layer){
+    redrawConnections(canvas.getLayer(layer.text))}
+}
+
+var allNodeConnections = {
+  type: 'line',
+  strokeStyle: '#0000ff',
+  strokeWidth: 4,
+  endArrow: true,
+  arrowRadius: 15,
+  arrowAngle: 90
+}
+
+//***Drawing Functions***
 
 //Drawing Helper Function
 
@@ -113,104 +161,51 @@ function isValidPosition(x1, y1){
   return true;
 }
 
-
-//Drawing Functions
-
 //Draws a new node
 function drawNewNode(e) {
 
     var x_coord = e.offsetX;
     var y_coord = e.offsetY;
 
-    var type, sides, concavity, radius, fillStyle;
+    var n = 'N' + counter;
 
-      var n = 'N' + counter;
+    //Set Current Node Body Properties
+    var currentNode = {
+      x: x_coord,
+      y: y_coord,
+      groups: [n],
+      dragGroups: [n],
+      name: n,
+      data: {
+        active: false,
+        index: counter
+      }
+    }
+
+    //Set Current Text Node Properties
+    var currentTextNode = {
+      x: x_coord,
+      y: y_coord,
+      groups: [n],
+      dragGroups: [n],
+      text: n
+    };
+
+    //Add the rest of the properties to Text
+    $.extend(currentTextNode, allTextNodes);
+
       if(currentNodeType === 'connection'){
-        type = 'arc';
-        radius = neuronRadius;
-        fillStyle = inactiveColor;
+        $.extend(currentNode, allNodes, connectionNodes);
       }
       if(currentNodeType === 'output'){
-        type = 'polygon';
-        sides = 5;
-        concavity = 0.5;
-        radius = 2 * neuronRadius;
-        fillStyle = 'purple';
-
+        $.extend(currentNode, allNodes, spinnerNodes);
       }
-      canvas.addLayer({
-        type: type,
-        draggable: true,
-        strokeStyle: '#000',
-        strokeWidth: neuronStrokeWidth,
-        fillStyle: fillStyle,
-        groups: [n],
-        dragGroups: [n],
-        name: n,
-        x: x_coord,
-        y: y_coord,
-        radius: radius,
-        concavity: concavity,
-        sides: sides,
-        dblclick: function(layer) {
-          console.log(layer)
-          if(currentDblClickAction === "activateNodes"){
-            toggleNodeColor(layer);
-            stateVector.clickUpdateState(layer);
-          }
-          if(currentDblClickAction === "deleteNodes"){
-            var nodeText = canvas.getLayers((l) => l.type === 'text' && l.text === layer.name)[0];
-            canvas.removeLayer(layer).removeLayer(nodeText)
 
-            var connectionsToDelete = canvas.getLayers((l) => l.type === "line" && (l.data.start === layer.name || l.data.finish === layer.name))
+      canvas.addLayer(currentNode)
+            .addLayer(currentTextNode)
+            .drawLayers();
 
-            connectionsToDelete.forEach((item) => canvas.removeLayer(item));
-            connectionsToDelete.forEach((item) => connectivityMatrix.disconnectNodes(Number(item.data.colIndex), Number(item.data.rowIndex)))
-
-            canvas.drawLayers();
-
-          }
-        },
-        dragstop: function(layer){
-          redrawConnections(layer);
-        },
-        data: {
-          active: false,
-          index: counter
-        }
-      })
-      .addLayer({
-        type: 'text',
-        draggable: true,
-        groups: [n],
-        dragGroups: [n],
-        strokeStyle: "#000",
-        strokeWidth: 3,
-        text: n,
-        x: x_coord ,
-        y: y_coord,
-        dblclick: function(layer){
-          var node = canvas.getLayers((l) => l.name  === layer.text)[0];
-          if(currentDblClickAction === 'activateNodes'){
-            toggleNodeColor(node);
-            stateVector.clickUpdateState(node);
-          }
-          if(currentDblClickAction === 'deleteNodes'){
-            canvas.removeLayer(layer).removeLayer(node)
-
-            var connectionsToDelete = canvas.getLayers((l) => l.type === "line" && (l.data.start === layer.text || l.data.finish === layer.text))
-
-            connectionsToDelete.forEach((item) => canvas.removeLayer(item));
-            connectionsToDelete.forEach((item) => connectivityMatrix.disconnectNodes(Number(item.data.colIndex), Number(item.data.rowIndex)))
-
-            canvas.drawLayers();
-          }
-        },
-        dragstop: function(layer){
-          redrawConnections(canvas.getLayer(layer.text));
-        }
-      })
-      .drawLayers();
+      //Update Global Counter
       counter++;
 }
 
@@ -231,14 +226,7 @@ function drawNewConnection(start, finish) {
     var y2 = finish.y - Math.sin(theta) * neuronRadius;
   }
 
-  //Draws the arrow between
-  canvas.addLayer({
-    type: 'line',
-    strokeStyle: '#0000ff',
-    strokeWidth: 4,
-    endArrow: true,
-    arrowRadius: 15,
-    arrowAngle: 90,
+  var currentNodeConnection = {
     x1: x1, y1: y1,
     x2: x2, y2: y2,
     name: start.name + finish.name,
@@ -248,9 +236,16 @@ function drawNewConnection(start, finish) {
       colIndex: start.name[1],
       rowIndex: finish.name[1]
     }
-  }).drawLayers();
+  }
+
+  $.extend(currentNodeConnection, allNodeConnections)
+
+  //Draws the arrow between
+  canvas.addLayer(currentNodeConnection)
+        .drawLayers();
 }
 
+//Redraws connections after moving a node
 function redrawConnections(layer){
   //Find all lines where start or finish is the layer
   //Erases those lines
@@ -277,6 +272,31 @@ function redrawConnections(layer){
     }
   }
   canvas.drawLayers();
+}
+
+//Sets the functionality of dblClick
+function dblClickFunction(layer){
+  var group = layer.groups[0]
+  var nodeText = canvas.getLayers((l) => l.type === 'text' && l.groups[0] === group)[0];
+  var nodeBody = canvas.getLayers((l) => l.name === group)[0];
+
+  if(currentDblClickAction === "activateNodes"){
+    toggleNodeColor(nodeBody);
+    stateVector.clickUpdateState(nodeBody);
+  }
+  if(currentDblClickAction === "deleteNodes"){
+    //Erases node body and text
+    canvas.removeLayer(nodeText)
+          .removeLayer(nodeBody);
+
+    //Erases any connections to or from that node
+    var connectionsToDelete = canvas.getLayers((l) => l.type === "line" && (l.data.start === nodeBody.name || l.data.finish === nodeBody.name))
+
+    connectionsToDelete.forEach((item) => canvas.removeLayer(item));
+    connectionsToDelete.forEach((item) => connectivityMatrix.disconnectNodes(Number(item.data.colIndex), Number(item.data.rowIndex)))
+
+    canvas.drawLayers();
+  }
 }
 
 //Used for clicking a node on or off
@@ -396,7 +416,7 @@ function updateConnections(str){
   endNode.val("");
 }
 
-// Simulation Functionality
+//***Simulation Functionality
 function simulate() {
   if(isSimulationRunning){
     stateVector.moveToNextState();
@@ -416,6 +436,7 @@ function endSimulation() {
 }
 
 
+//***Control Panel Functions***
 function setNodeType(str) {
   var nodeTypes = [$('#input'), $('#connection'), $('#output')];
   nodeTypes.forEach((item) => item.removeClass('active'));
@@ -430,6 +451,7 @@ setDblClickAction = function(str){
   currentDblClickAction = str;
 }
 
+//Activates the dropdown toggle
 $(document).ready(function() {
     $(".dropdown-toggle").dropdown();
 });
