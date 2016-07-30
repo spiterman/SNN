@@ -1,5 +1,4 @@
 node_modules
 .env
 client/bower_components
-StaticNeuralNetworkReadme.pages
-SNN.png
+ignore
