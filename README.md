@@ -1,4 +1,4 @@
-# SNN
+# Static Neural Network
 
 The idea for this project came to me when I was studying how the brain works. I realized that a network of neurons behaves a lot like nodes on a directed graph. They take signals in through their dendrites and, if triggered, they send out a signal through their axon.
 
