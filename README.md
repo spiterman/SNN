@@ -42,6 +42,8 @@ Multiplying the connectivity matrix and the state vector together yields another
 My goal with this project was to implement a form of one-way data-binding. A user would interact with the UI, either through the control panel, or through interacting with the neurons directly, and this would update the model. This means that any interaction would result in a change in either the global variables that dictate the type of the neuron, or the functionality of double clicking, or a change in either the connectivity matrix or state vector.
 This updated model would then feed back into the drawing functions, which in turn would affect the UI and what the user sees.
 
+![data flow](https://s8.postimg.org/vcndudnqt/Data_Flow.png)
+
 ####Observations
 
 The interesting thing about the connectivity matrix is that it allows different behaviors with the same connections between the neurons. This occurs because different state vectors will behave differently with the same connections. Starting with one active neuron is not the same as starting with 2 or 3 or more. And even with the same number of neurons, their relative positions on the graph can affect the behavior of it differently.
