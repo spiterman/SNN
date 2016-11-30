@@ -44,11 +44,13 @@ function Text(x, y, n){
   this.y = y;
   this.groups = [n];
   this.dragGroups = [n];
-  text: n;
+  this.text = n;
 };
 
 Text.prototype = Object.create({
-  strokeWidth: 3
+  strokeWidth: 3,
+  strokeStyle: 'black',
+  type: 'text'
 });
 
 // Connections
@@ -94,9 +96,11 @@ canvas.click(function(e) {
 function addNeuron(x, y, n){
   var node = graph.addNode();
   var neuron = new Neuron(x, y, n);
+  var text = new Text(x, y, n);
   $.extend(neuron, Neuron.prototype);
-  console.log(neuron);
+  $.extend(text, Text.prototype);
   canvas.addLayer(neuron)
+        .addLayer(text)
         .drawLayers();
 };
 
