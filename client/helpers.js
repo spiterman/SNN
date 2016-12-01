@@ -17,22 +17,23 @@ function isValidPosition(x1, y1){
 
 function generateEndpoints(start, end){
 
-  var startNode = canvas.getLayer(start);
-  var endNode = canvas.getLayer(end);
+  var startNode = canvas.getLayer('N' + start);
+  var endNode = canvas.getLayer('N' + end);
+  console.log(start, end);
 
   var x1, x2, y1, y2;
-  var ratio = ((end.y - start.y)/(end.x - start.x))
+  var ratio = ((endNode.y - startNode.y)/(endNode.x - startNode.x))
   var theta = Math.atan(ratio)
-  if(end.x <= start.x) {
-    x1 = start.x - Math.cos(theta) * neuronRadius;
-    y1 = start.y - Math.sin(theta) * neuronRadius;
-    x2 = end.x + Math.cos(theta) * neuronRadius;
-    y2 = end.y + Math.sin(theta) * neuronRadius;
+  if(endNode.x <= startNode.x) {
+    x1 = startNode.x - Math.cos(theta) * neuronRadius;
+    y1 = startNode.y - Math.sin(theta) * neuronRadius;
+    x2 = endNode.x + Math.cos(theta) * neuronRadius;
+    y2 = endNode.y + Math.sin(theta) * neuronRadius;
   } else {
-    x1 = start.x + Math.cos(theta) * neuronRadius;
-    y1 = start.y + Math.sin(theta) * neuronRadius;
-    x2 = end.x - Math.cos(theta) * neuronRadius;
-    y2 = end.y - Math.sin(theta) * neuronRadius;
+    x1 = startNode.x + Math.cos(theta) * neuronRadius;
+    y1 = startNode.y + Math.sin(theta) * neuronRadius;
+    x2 = endNode.x - Math.cos(theta) * neuronRadius;
+    y2 = endNode.y - Math.sin(theta) * neuronRadius;
   }
 
   return {
@@ -40,6 +41,6 @@ function generateEndpoints(start, end){
     x2: x2,
     y1: y1,
     y2: y2,
-    name: (start + '-' + end)
+    name: ('N' + start + 'N' + end)
   };
 }
