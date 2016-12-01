@@ -12,7 +12,7 @@ function Neuron(x, y, n){
   this.y = y;
   this.groups = [n];
   this.dragGroups = [n];
-  name = n;
+  this.name = 'N' + n;
 }
 
 // Default Neurons
@@ -54,8 +54,12 @@ Text.prototype = Object.create({
 });
 
 // Connections
-function Connection(){
-
+function Connection(endpoints){
+  this.x1 = endpoints.x1;
+  this.x2 = endpoints.x2;
+  this.y1 = endpoints.y1;
+  this.y2 = endpoints.y2;
+  this.name = endpoints.name;
 };
 
 Connection.prototype = Object.create({
@@ -96,6 +100,7 @@ canvas.click(function(e) {
 function addNeuron(x, y, n){
   var node = graph.addNode();
   var neuron = new Neuron(x, y, n);
+  console.log(neuron.name);
   var text = new Text(x, y, n);
   $.extend(neuron, Neuron.prototype);
   $.extend(text, Text.prototype);
@@ -103,6 +108,38 @@ function addNeuron(x, y, n){
         .addLayer(text)
         .drawLayers();
 };
+
+function addConnection(start, end){
+  graph.connectNodes(start, end);
+  var endpoints = generateEndpoints(start, end);
+  var connection = new Connection(endpoints);
+  $.extend(connection, Connection.prototype);
+  console.log(connection);
+  canvas.addLayer(connection)
+        .drawLayers();
+}
+
+function deleteConnection(start, end){
+
+}
+
+function updateConnections(str){
+  var start = $('#startNode');
+  var end = $('#endNode');
+  // console.log(start.val(), end.val());
+  if(str === 'connect'){
+    addConnection(start.val(), end.val());
+  }
+  if(str === 'disconnect'){
+    // Disconnect Functionality;
+    deleteConnection(start.val(), end.val());
+  }
+
+  start.val("");
+  end.val("");
+}
+
+
 
 // function addNode() {
 //   if(counter <= maxNeurons ){
