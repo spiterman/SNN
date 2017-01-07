@@ -1,9 +1,5 @@
-// Global Variables
-var counter = 0;
-var currentNodeType = undefined;
-
 //**** Node ***
-function Node(num){
+function Node(num, currentNodeType){
   this.num = num;
   this.state = 0;
   this.type = currentNodeType;
@@ -14,20 +10,44 @@ function Node(num){
 // *** Graph ***
 function Graph() {
   this.nodes = {};
+  this.counter = 0;
+  this.currentNodeType = undefined;
+  this.simulationSpeed = 1000;
+  this.isSimulating = false;
+  this.nodeTypes = [];
 };
 
+
+// **** Graph Methods ***
 Graph.prototype.addNode = function(){
-  var node = new Node(counter);
-  this.nodes[counter] = node;
-  counter++;
+  var graph = this;
+  var node = new Node(graph.counter, graph.currentNodeType);
+  graph.nodes[graph.counter] = node;
+  graph.counter++;
   return node;
 };
 
 Graph.prototype.deleteNode = function(num){
-  delete this.nodes[num];
-  //TO DO: Delete all the connections too.
-};
+  // O(C(n_i)), where C(n) is # of connections to and from for a given node "i"
+  var graph = this;
+  var node = graph.nodes[num];
 
+  // Delete all nodes upstream
+  for(var n in node.connectionsFrom) {
+    var upstreamNode = node.connectionsFrom[n];
+    delete upstreamNode.connectionsTo[num];
+  }
+
+  // Delete all nodes downstream
+  for(var n in node.connectionsTo) {
+    var downstreamNode = node.connectionsTo[n];
+    delete downstreamNode.connectionsFrom[num];
+  }
+
+  // Delete this node (with all its connections)
+  delete this.nodes[num];
+
+};
 
 Graph.prototype.connectNodes = function(start, end){
   var graph = this;
@@ -55,7 +75,6 @@ Graph.prototype.updateState = function(){
   // Find All new nodes to be activated: O(n)
   for(var n in graph.nodes){
     var node = graph.nodes[n];
-    // console.log(node)
     if(node.state === 1){
       for(var connection in node.connectionsTo){
         newActiveNodes[connection] = 1;
@@ -69,4 +88,52 @@ Graph.prototype.updateState = function(){
     graph.activateNode(num);
   }
 };
+
+Graph.prototype.simulate = function() {
+  var graph = this;
+  setInterval(() => {
+    graph.updateState();
+    console.log(graph);
+  }, graph.simulationSpeed);
+}
+
+
+// Utility Functions
+
+Graph.prototype.setSimulationSpeed = function(num) {
+  // Makes sure input fits within certain range
+  var correction = num;
+  if(num < 0.2) {
+    alert("That's too fast!")
+    correction = 0.2;
+  }
+  if(num > 30) {
+    correction = 30;
+    alert("That's too slow!")
+  }
+  this.simulationSpeed = 1000 * correction;
+}
+
+var g = new Graph();
+
+g.addNode();
+g.addNode();
+g.addNode();
+g.addNode();
+g.connectNodes(0, 1);
+g.connectNodes(1, 2);
+g.connectNodes(2, 3);
+g.connectNodes(0, 3);
+g.activateNode(0);
+// g.deleteNode(1);
+// g.simulate();
+
+g.updateState();
+g.updateState();
+g.updateState();
+console.log(g)
+
+
+
+
 
