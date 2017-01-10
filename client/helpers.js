@@ -19,7 +19,6 @@ function generateEndpoints(start, end){
 
   var startNode = canvas.getLayer('N' + start);
   var endNode = canvas.getLayer('N' + end);
-  console.log(start, end);
 
   var x1, x2, y1, y2;
   var ratio = ((endNode.y - startNode.y)/(endNode.x - startNode.x))
@@ -41,6 +40,8 @@ function generateEndpoints(start, end){
     x2: x2,
     y1: y1,
     y2: y2,
-    name: ('N' + start + 'N' + end)
+    name: ('N' + start + 'N' + end),
+    start: 'N' + start,
+    end: 'N' + end
   };
 }
