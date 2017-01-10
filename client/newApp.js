@@ -114,24 +114,6 @@ Graph.prototype.setSimulationSpeed = function(num) {
   this.simulationSpeed = 1000 * correction;
 }
 
-var g = new Graph();
-
-g.addNode();
-g.addNode();
-g.addNode();
-g.addNode();
-g.connectNodes(0, 1);
-g.connectNodes(1, 2);
-g.connectNodes(2, 3);
-g.connectNodes(0, 3);
-g.activateNode(0);
-// g.deleteNode(1);
-// g.simulate();
-
-g.updateState();
-g.updateState();
-g.updateState();
-console.log(g)
 
 
 
