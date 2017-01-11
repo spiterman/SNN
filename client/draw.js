@@ -8,15 +8,21 @@ var neuronRadius = 25;
 
 
 // To Do: Refactor to Use Simulation rather than assign globals
-function Simulation(canvas) {
-  this.canvas = $(canvas);
+function Simulation() {
+  this.canvas = $('#canvas');
   // Neuron Properties
   this.maxNeurons = 30;
   this.neuronDistance = 3;
   this.neuronRadius = 25;
+  this.colors = {
+    active: 'yellow',
+    inactive: 'red'
+  };
+
+  this.graph = new Graph();
 }
 
-var simulation = new Simulation('#canvas');
+var simulation = new Simulation();
 
 // Neuron Constructor Function
 // To Do: Pass in arguments from Simulation
@@ -37,9 +43,8 @@ function Neuron(x, y, n){
   this.dragstop = redrawConnections;
 }
 
-// Text
+// Text Constructor Function
 function Text(x, y, n){
-
   this.x = x;
   this.y = y;
   this.groups = [n];
@@ -52,6 +57,35 @@ function Text(x, y, n){
   this.dblclick = (layer) => toggleNeuronState(canvas.getLayer('N' + layer.text));
   this.dragstop = (layer) => redrawConnections(canvas.getLayer('N' + layer.text));
 };
+
+// Spinners
+function Spinner() {
+  this.spinnerConcavity = 0.5;
+  this.spinnerSides = 5;
+  this.type = 'polygon';
+};
+
+
+// Connections
+function Connection(endpoints){
+  // Data
+  this.x1 = endpoints.x1;
+  this.x2 = endpoints.x2;
+  this.y1 = endpoints.y1;
+  this.y2 = endpoints.y2;
+  this.name = endpoints.name;
+  this.start = endpoints.start;
+  this.end = endpoints.end;
+
+  // Draw properties
+  this.type = 'line';
+  this.strokeStyle = 'black';
+  this.strokeWidth = 4;
+  this.endArrow = true;
+  this.arrowRadius = 15;
+  this.arrowAngle = 90;
+};
+
 
 function toggleNeuronState(layer){
   var num = layer.name[1]
@@ -89,33 +123,6 @@ function redrawConnections(layer){
   }
 }
 
-// Spinners
-function Spinner() {
-  this.spinnerConcavity = 0.5;
-  this.spinnerSides = 5;
-  this.type = 'polygon';
-};
-
-
-// Connections
-function Connection(endpoints){
-  // Data
-  this.x1 = endpoints.x1;
-  this.x2 = endpoints.x2;
-  this.y1 = endpoints.y1;
-  this.y2 = endpoints.y2;
-  this.name = endpoints.name;
-  this.start = endpoints.start;
-  this.end = endpoints.end;
-
-  // Draw properties
-  this.type = 'line';
-  this.strokeStyle = 'black';
-  this.strokeWidth = 4;
-  this.endArrow = true;
-  this.arrowRadius = 15;
-  this.arrowAngle = 90;
-};
 
 
 // ** Control Panel
