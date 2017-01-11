@@ -26,13 +26,13 @@ function Neuron(x, y, n){
   this.groups = [n];
   this.dragGroups = [n];
   this.name = 'N' + n;
+  this.num = n;
   this.strokeWidth = 4;
   this.strokeStyle = 'black';
   this.draggable = true;
   this.type = 'arc';
   this.radius = 25;
   this.fillStyle = 'red';
-  this.data = null;
   this.dblclick = toggleNeuronState;
   this.dragstop = redrawConnections;
 }
@@ -48,19 +48,20 @@ function Text(x, y, n){
   this.strokeWidth = 3;
   this.strokeStyle = 'black';
   this.type = 'text';
-  // this.neuron = canvas.getLayer('N' + txt.text);
-
   // Edge case where text is clicked instead
   this.dblclick = (layer) => toggleNeuronState(canvas.getLayer('N' + layer.text));
   this.dragstop = (layer) => redrawConnections(canvas.getLayer('N' + layer.text));
 };
 
 function toggleNeuronState(layer){
-  if(layer.data.state === 1){
-    layer.data.state = 0;
+  var num = layer.name[1]
+  if(graph.nodes[num].state === 1){
+    graph.deactivateNode(num)
+    // layer.data.state = 0;
     layer.fillStyle = 'red';
   } else {
-    layer.data.state = 1;
+    graph.activateNode(num)
+    // layer.data.state = 1;
     layer.fillStyle = 'yellow';
   }
   canvas.drawLayers();
@@ -70,7 +71,6 @@ function toggleNeuronState(layer){
 //Redraws connections after moving a node
 function redrawConnections(layer){
   // Erase old connections
-  // To Do: Refactor To Erase Connections
   canvas.getLayers((l) => {
     return l.start === layer.name || l.end === layer.name;
   })
@@ -80,35 +80,22 @@ function redrawConnections(layer){
   canvas.drawLayers()
 
   // Draw New Connections
-  for(var key in layer.data.connectionsTo){
-    drawConnection(layer.data.num, key)
+  var neuron = graph.nodes[layer.num]
+  for(var j in neuron.connectionsTo){
+    drawConnection(layer.num, j)
   }
-  for(var key in layer.data.connectionsFrom){
-    drawConnection(key, layer.data.num)
+  for(var k in neuron.connectionsFrom){
+    drawConnection(k, layer.num)
   }
 }
 
-
-// Default Neurons
-// Neuron.prototype = Object.create({
-// });
-
-// Neuron.prototype.dragstop = redrawConnections; //
-// Neuron.prototype.dblclick = dblClickFunction; //Maybe switch assignment based on optino
-
-
 // Spinners
-// function Spinner(){};
+function Spinner() {
+  this.spinnerConcavity = 0.5;
+  this.spinnerSides = 5;
+  this.type = 'polygon';
+};
 
-// Spinner.prototype = Object.create(Neuron.prototype, {
-//   spinnerConcavity: 0.5,
-//   spinnerSides: 5,
-//   type: 'polygon'
-// });
-
-
-// Text.prototype = Object.create({
-// });
 
 // Connections
 function Connection(endpoints){
@@ -130,36 +117,21 @@ function Connection(endpoints){
   this.arrowAngle = 90;
 };
 
-// Connection.prototype = Object.create({
-// });
-
 
 // ** Control Panel
 var currentNodeType = "connection";
 var currentDblClickAction = "activateNodes";
 
 // // ** Simulation
-// var simulationSpeed = 2000;
-// var isSimulationRunning = false;
+var simulationSpeed = 2000;
+var isSimulationRunning = false;
 
 
 // App Stuff
 
 // Create a graph from newApp.js
 var graph = new Graph();
-
-
-//Main Functions
-// canvas.click(function(e) {
-
-//   var x = e.offsetX;
-//   var y = e.offsetY;
-//   if(isValidPosition(x, y)){
-//     addNeuron(x, y);
-//   }
-// });
-
-
+// To Do: Refactor so graph is property on simuation
 
 // Main Draw Neuron Function
 canvas.click(drawNeuron);
@@ -172,7 +144,6 @@ function drawNeuron(e) {
   if(isValidPosition(x, y)){
     var node = graph.addNode(); // Graph properties
     var neuron = new Neuron(x, y, node.num); // Drawing properties
-    neuron.data = node; // Binds neuron drawing to node data
     var text = new Text(x, y, node.num); // Add text
 
     // Draw to Canvas
@@ -182,32 +153,32 @@ function drawNeuron(e) {
   }
 };
 
-// function addNeuron(x, y, n){
-//   var node = graph.addNode();
-//   var neuron = new Neuron(x, y, n);
-//   console.log(neuron.name);
-//   var text = new Text(x, y, n);
-//   $.extend(neuron, Neuron.prototype);
-//   $.extend(text, Text.prototype);
-//   canvas.addLayer(neuron)
-//         .addLayer(text)
-//         .drawLayers();
-// };
+function drawNextState(){
+  var neurons = canvas.getLayers((layer) => layer.type === 'arc');
+  neurons.forEach((neuron) => {
+    var num = neuron.name[1];
+    if(graph.nodes[num].state === 1){
+      neuron.fillStyle = 'yellow';
+    } else {
+      neuron.fillStyle = 'red';
+    }
+  });
+  canvas.drawLayers();
+}
 
 function drawConnection(start, end){
   graph.connectNodes(start, end);
   var endpoints = generateEndpoints(start, end);
   var connection = new Connection(endpoints);
-  // $.extend(connection, Connection.prototype);
-  // console.log(connection);
-
   canvas.addLayer(connection)
         .drawLayers();
 }
 
-function deleteConnection(start, end){
+function eraseConnection(start, end){
+  // To Do:
+  // Delete connection on graph
   // Find the layer
-
+  // Error Handling
 }
 
 function updateConnections(str){
@@ -228,22 +199,14 @@ function updateConnections(str){
 
 
 
-// function addNode() {
-//   if(counter <= maxNeurons ){
-//     graph.addNode();
-//     drawNeuron();
-//   } else {
-//     alert('Maximum number of neurons reached!')
-//   }
-// }
-
-
 
 //***Simulation Functionality
 function simulate() {
   if(isSimulationRunning){
-    // stateVector.moveToNextState();
+
     graph.updateState();
+    drawNextState();
+
     setTimeout(function(){
       simulate();
     }, simulationSpeed)

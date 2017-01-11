@@ -114,8 +114,3 @@ Graph.prototype.setSimulationSpeed = function(num) {
   this.simulationSpeed = 1000 * correction;
 }
 
-
-
-
-
-
