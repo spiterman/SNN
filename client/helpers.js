@@ -4,7 +4,7 @@ function distance(x1, y1, x2, y2) {
   return Math.sqrt(Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2));
 }
 
-function isValidPosition(x1, y1){
+function isValidPosition(x1, y1, neuronDistance, neuronRadius){
   var layers = canvas.getLayers((layer) => layer.type === 'arc');
 
   for(var i = 0; i < layers.length; i++){
@@ -15,7 +15,7 @@ function isValidPosition(x1, y1){
   return true;
 }
 
-function generateEndpoints(start, end){
+function generateEndpoints(start, end, neuronRadius){
 
   var startNode = canvas.getLayer('N' + start);
   var endNode = canvas.getLayer('N' + end);

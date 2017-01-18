@@ -1,28 +1,11 @@
 // *** Globals ***
 const canvas = $('#canvas');
-var maxNeurons  = 30;
+// var maxNeurons  = 30;
 var neuronDistance = 3;
 var neuronRadius = 25;
 // var activeColor = 'yellow';
 // var inactiveColor = 'red';
 
-
-// To Do: Refactor to Use Simulation rather than assign globals
-function Simulation() {
-  this.canvas = $('#canvas');
-  // Neuron Properties
-  this.maxNeurons = 30;
-  this.neuronDistance = 3;
-  this.neuronRadius = 25;
-  this.colors = {
-    active: 'yellow',
-    inactive: 'red'
-  };
-
-  this.graph = new Graph();
-}
-
-var simulation = new Simulation();
 
 // Neuron Constructor Function
 // To Do: Pass in arguments from Simulation
@@ -43,6 +26,13 @@ function Neuron(x, y, n){
   this.dragstop = redrawConnections;
 }
 
+// Spinners Constructor Function
+function Spinner() {
+  this.spinnerConcavity = 0.5;
+  this.spinnerSides = 5;
+  this.type = 'polygon';
+};
+
 // Text Constructor Function
 function Text(x, y, n){
   this.x = x;
@@ -58,15 +48,7 @@ function Text(x, y, n){
   this.dragstop = (layer) => redrawConnections(canvas.getLayer('N' + layer.text));
 };
 
-// Spinners
-function Spinner() {
-  this.spinnerConcavity = 0.5;
-  this.spinnerSides = 5;
-  this.type = 'polygon';
-};
-
-
-// Connections
+// Connection Constructor Function
 function Connection(endpoints){
   // Data
   this.x1 = endpoints.x1;
@@ -87,18 +69,20 @@ function Connection(endpoints){
 };
 
 
-function toggleNeuronState(layer){
+
+// Node Functionality
+
+// Double Click
+function toggleNeuronState(layer, simulation){
   var num = layer.name[1]
-  if(graph.nodes[num].state === 1){
-    graph.deactivateNode(num)
-    // layer.data.state = 0;
-    layer.fillStyle = 'red';
+  if(simulation.graph.nodes[num].state === 1){
+    simulation.graph.deactivateNode(num);
+    layer.fillStyle = simulation.colors.inactive;
   } else {
-    graph.activateNode(num)
-    // layer.data.state = 1;
-    layer.fillStyle = 'yellow';
+    simulation.graph.activateNode(num);
+    layer.fillStyle = simulation.colors.active;
   }
-  canvas.drawLayers();
+  simulation.canvas.drawLayers();
 }
 
 
@@ -148,7 +132,7 @@ function drawNeuron(e) {
   var y = e.offsetY;
 
   // Make sure neurons aren't too close
-  if(isValidPosition(x, y)){
+  if(isValidPosition(x, y, neuronDistance, neuronRadius)){
     var node = graph.addNode(); // Graph properties
     var neuron = new Neuron(x, y, node.num); // Drawing properties
     var text = new Text(x, y, node.num); // Add text
@@ -181,7 +165,8 @@ function drawConnection(start, end){
         .drawLayers();
 }
 
-function eraseConnection(start, end){
+
+function deleteConnection(start, end){
   // To Do:
   // Delete connection on graph
   // Find the layer
@@ -207,6 +192,7 @@ function updateConnections(str){
 
 
 
+// Done
 //***Simulation Functionality
 function simulate() {
   if(isSimulationRunning){
@@ -232,7 +218,7 @@ function endSimulation() {
 
 //***Control Panel Functions***
 function setNodeType(str) {
-  var nodeTypes = [$('#input'), $('#connection'), $('#output')];
+  var nodeTypes = [$('#input'), $('#connection'), $('#spinner')];
   nodeTypes.forEach((item) => item.removeClass('active'));
   $('#' + str).addClass('active');
   currentNodeType = str;
