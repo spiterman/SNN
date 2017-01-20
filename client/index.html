@@ -43,10 +43,10 @@
               <div>
                 <label for="" id="setConnections">Set connections</label>
                 <div class="btn-group-vertical">
-                  <button class="btn btn-default" onclick="updateConnections('connect')" type="button">
+                  <button class="btn btn-default" onclick="simulation.updateConnections('connect')" type="button">
                     Connect
                   </button>
-                  <button class="btn btn-default" type="button" onclick="updateConnections('disconnect')">
+                  <button class="btn btn-default" type="button" onclick="simulation.updateConnections('disconnect')">
                     Disconnect
                   </button>
                 </div>
@@ -76,9 +76,9 @@
             <li class="dropdown">
               <a href="#" data-toggle="dropdown" class="dropdown-toggle">Node Type<b class="caret"></b></a>
               <ul class="dropdown-menu">
-                <li><a href="#" class="btn active" onclick="setNodeType('connection')" id="connection">Connector</a></li>
+                <li><a href="#" class="btn active" onclick="simulation.setNodeType('connection')" id="connection">Connector</a></li>
                 <li class="divider"></li>
-                <li><a href="#" class="btn" onclick="setNodeType('spinner')" id="spinner">Spinner</a></li>
+                <li><a href="#" class="btn" onclick="simulation.setNodeType('spinner')" id="spinner">Spinner</a></li>
               </ul>
             </li>
 
@@ -86,9 +86,9 @@
             <li class="dropdown">
                 <a href="#" data-toggle="dropdown" class="dropdown-toggle">Set Dbl Click<b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                    <li><a href="#" class="btn active" id="activateNodes" onclick="setDblClickAction('activateNodes')">Activate</a></li>
+                    <li><a href="#" class="btn active" id="activateNodes" onclick="simulation.setDblClickAction('activateNodes')">Activate</a></li>
                     <li class="divider"></li>
-                    <li><a href="#" class="btn" id="deleteNodes" onclick="setDblClickAction('deleteNodes')">Delete</a></li>
+                    <li><a href="#" class="btn" id="deleteNodes" onclick="simulation.setDblClickAction('deleteNodes')">Delete</a></li>
                 </ul>
             </li>
 
@@ -96,9 +96,9 @@
             <li class="dropdown">
               <a href="#" data-toggle="dropdown" class="dropdown-toggle">Simulate<b class="caret"></b></a>
               <ul class="dropdown-menu">
-                <li><a href="#" class="btn" onclick="runSimulation()">Run</a></li>
+                <li><a href="#" class="btn" onclick="simulation.runSimulation()">Run</a></li>
                 <li class="divider"></li>
-                <li><a href="#" class="btn" onclick="endSimulation()">End</a></li>
+                <li><a href="#" class="btn" onclick="simulation.endSimulation()">End</a></li>
               </ul>
             </li>
           </ul>
@@ -123,6 +123,7 @@
   <script src="newApp.js"></script>
   <script src="helpers.js"></script>
   <script src="draw.js"></script>
+  <script src="simulation.js"></script>
 
   <!-- <script src="app.js"></script> -->
 </body>
