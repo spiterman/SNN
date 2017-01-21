@@ -1,14 +1,4 @@
-// *** Globals ***
-// const canvas = $('#canvas');
-// var maxNeurons  = 30;
-// var neuronDistance = 3;
-// var neuronRadius = 25;
-// var activeColor = 'yellow';
-// var inactiveColor = 'red';
-
-
 // Neuron Constructor Function
-// To Do: Pass in arguments from Simulation
 function Neuron(x, y, n, simulation){
   this.x = x;
   this.y = y;
@@ -22,7 +12,7 @@ function Neuron(x, y, n, simulation){
   this.type = 'arc';
   this.radius = 25;
   this.fillStyle = 'red';
-  this.dblclick = toggleNeuronState(simulation);
+  this.dblclick = dblClick(simulation);
   this.dragstop = redrawConnections(simulation);
 }
 
@@ -39,6 +29,7 @@ function Text(x, y, n, simulation){
   this.y = y;
   this.groups = [n];
   this.dragGroups = [n];
+  this.num = n;
   this.text = n;
   this.strokeWidth = 3;
   this.strokeStyle = 'black';
@@ -68,14 +59,21 @@ function Connection(endpoints){
   this.arrowAngle = 90;
 };
 
-
-
 // Node Functionality
+function dblClick(simulation) {
+  var dblClickActions = {
+    'activateNodes': toggleNeuronState(simulation),
+    'deleteNodes': deleteNodes(simulation)
+  }
+  return function(layer){
+    dblClickActions[simulation.currentDblClickAction](layer);
+  }
+}
 
-// New toggleNeuronState w/ currying
+// Toggle Neuron State w/ currying
 function toggleNeuronState(simulation){
   return function(layer){
-    var num = layer.name[1];
+    var num = layer.num;
     if(simulation.graph.nodes[num].state === 1){
       simulation.graph.deactivateNode(num);
       layer.fillStyle = simulation.colors.inactive;
@@ -87,7 +85,31 @@ function toggleNeuronState(simulation){
   }
 }
 
-// New redrawConnections w/ currying
+// Delete Nodes + Connections w/ currying
+function deleteNodes(simulation){
+  return function(layer){
+    var num = layer.num;
+    simulation.graph.deleteNode(num);
+    var canvas = simulation.canvas;
+
+    // Remove Connections
+    canvas.getLayers((l) => {
+      return l.start === 'N' + num || l.end === 'N' + num;
+    }).forEach((item) => {
+      simulation.canvas.removeLayer(item.name)
+    });
+
+    canvas.getLayers((l) => {
+      return l.num === num;
+    }).forEach((item) => {
+      simulation.canvas.removeLayer(item);
+    });
+
+    canvas.drawLayers();
+  }
+}
+
+// Redraw Connections after Dragging w/ currying
 function redrawConnections(simulation){
   return function(layer) {
     simulation.canvas.getLayers((l) => {
@@ -108,127 +130,3 @@ function redrawConnections(simulation){
     }
   }
 }
-
-
-
-// ** Control Panel
-// var currentNodeType = "connection";
-// var currentDblClickAction = "activateNodes";
-
-// // ** Simulation
-// var simulationSpeed = 2000;
-// var isSimulationRunning = false;
-
-
-// App Stuff
-
-// Create a graph from newApp.js
-// var graph = new Graph();
-// To Do: Refactor so graph is property on simuation
-
-// Main Draw Neuron Function
-// canvas.click(drawNeuron);
-
-// function drawNeuron(e) {
-//   var x = e.offsetX;
-//   var y = e.offsetY;
-
-//   // Make sure neurons aren't too close
-//   if(isValidPosition(x, y, neuronDistance, neuronRadius)){
-//     var node = graph.addNode(); // Graph properties
-//     var neuron = new Neuron(x, y, node.num); // Drawing properties
-//     var text = new Text(x, y, node.num); // Add text
-
-//     // Draw to Canvas
-//     canvas.addLayer(neuron)
-//           .addLayer(text)
-//           .drawLayers();
-//   }
-// };
-
-// function drawNextState(){
-//   var neurons = canvas.getLayers((layer) => layer.type === 'arc');
-//   neurons.forEach((neuron) => {
-//     var num = neuron.name[1];
-//     if(graph.nodes[num].state === 1){
-//       neuron.fillStyle = 'yellow';
-//     } else {
-//       neuron.fillStyle = 'red';
-//     }
-//   });
-//   canvas.drawLayers();
-// }
-
-// function drawConnection(start, end){
-//   graph.connectNodes(start, end);
-//   var endpoints = generateEndpoints(start, end);
-//   var connection = new Connection(endpoints);
-//   canvas.addLayer(connection)
-//         .drawLayers();
-// }
-
-
-function deleteConnection(start, end){
-  // To Do:
-  // Delete connection on graph
-  // Find the layer
-  // Error Handling
-}
-
-// function updateConnections(str){
-//   var start = $('#startNode');
-//   var end = $('#endNode');
-//   // console.log(start.val(), end.val());
-//   if(str === 'connect'){
-//     drawConnection(start.val(), end.val());
-//   }
-//   if(str === 'disconnect'){
-//     // Disconnect Functionality;
-//     deleteConnection(start.val(), end.val());
-//   }
-
-//   start.val("");
-//   end.val("");
-// }
-
-
-
-
-// Done
-//***Simulation Functionality
-// function simulate() {
-//   if(isSimulationRunning){
-
-//     graph.updateState();
-//     drawNextState();
-
-//     setTimeout(function(){
-//       simulate();
-//     }, simulationSpeed)
-//   }
-// }
-
-// function runSimulation(){
-//   isSimulationRunning = true;
-//   simulate();
-// }
-
-// function endSimulation() {
-//   isSimulationRunning = false;
-// }
-
-
-//***Control Panel Functions***
-// function setNodeType(str) {
-//   var nodeTypes = [$('#input'), $('#connection'), $('#spinner')];
-//   nodeTypes.forEach((item) => item.removeClass('active'));
-//   $('#' + str).addClass('active');
-//   currentNodeType = str;
-// }
-
-// setDblClickAction = function(str){
-//   var dblClickActions = [$('#activateNodes'), $('#deleteNodes')];
-//   dblClickActions.forEach( (item) => item.removeClass('active'));
-//   $('#' + str).addClass('active');
-//   currentDblClickAction = str;
-// }

@@ -1,8 +1,7 @@
 // Math Helpers
-
 function objEach(obj, cb){
   for(var key in obj){
-    cb(obj[key]);
+    cb(obj[key], key, obj);
   }
 }
 
