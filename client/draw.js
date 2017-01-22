@@ -1,26 +1,41 @@
-// Neuron Constructor Function
-function Neuron(x, y, n, simulation){
+function selectNeuronType(simulation){
+  var options = {
+    'connection': Neuron,
+    'spinner': Spinner
+  };
+  return options[simulation.currentNodeType];
+}
+
+function BasicNode(x, y, n, simulation){
   this.x = x;
   this.y = y;
   this.groups = [n];
-  this.dragGroups = [n];
   this.name = 'N' + n;
+  this.draggable = true;
+  this.dragGroups = [n];
   this.num = n;
   this.strokeWidth = 4;
   this.strokeStyle = 'black';
-  this.draggable = true;
-  this.type = 'arc';
-  this.radius = 25;
   this.fillStyle = 'red';
   this.dblclick = dblClick(simulation);
   this.dragstop = redrawConnections(simulation);
 }
 
+// *** Different Layer Type Constructors ****
+// Neuron Constructor Function
+function Neuron(x, y, n, simulation){
+  BasicNode.call(this, x, y, n, simulation);
+  this.type = 'arc';
+  this.radius = simulation.neuronRadius;
+}
+
 // Spinners Constructor Function
-function Spinner() {
-  this.spinnerConcavity = 0.5;
-  this.spinnerSides = 5;
+function Spinner(x, y, n, simulation) {
+  BasicNode.call(this, x, y, n, simulation);
   this.type = 'polygon';
+  this.radius = simulation.spinnerRadius;
+  this.concavity = 0.5;
+  this.sides = 5;
 };
 
 // Text Constructor Function
@@ -59,14 +74,16 @@ function Connection(endpoints){
   this.arrowAngle = 90;
 };
 
-// Node Functionality
-function dblClick(simulation) {
-  var dblClickActions = {
+// *** Different Node Functions ***
+
+// Dbl Click Functionality
+function selectDblClickAction(simulation) {
+  var options = {
     'activateNodes': toggleNeuronState(simulation),
     'deleteNodes': deleteNodes(simulation)
   }
   return function(layer){
-    dblClickActions[simulation.currentDblClickAction](layer);
+    options[simulation.currentDblClickAction](layer);
   }
 }
 
