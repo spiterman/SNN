@@ -10,7 +10,7 @@ function distance(x1, y1, x2, y2) {
 }
 
 function isValidPosition(x1, y1, simulation){
-  var layers = simulation.canvas.getLayers((layer) => layer.type === 'arc');
+  var layers = simulation.canvas.getLayers((layer) => layer.type === 'arc' || layer.type === 'polygon');
 
   for(var i = 0; i < layers.length; i++){
     if(distance(x1, y1, layers[i].x, layers[i].y) < simulation.neuronDistance + 2 * simulation.neuronRadius){
