@@ -11,10 +11,7 @@ function Node(num, currentNodeType){
 function Graph() {
   this.nodes = {};
   this.counter = 0;
-  this.currentNodeType = undefined;
-  this.simulationSpeed = 1000;
   this.isSimulating = false;
-  this.nodeTypes = [];
 };
 
 
@@ -51,14 +48,22 @@ Graph.prototype.deleteNode = function(num){
 
 Graph.prototype.connectNodes = function(start, end){
   var graph = this;
-  graph.nodes[start].connectionsTo[end] = graph.nodes[end];
-  graph.nodes[end].connectionsFrom[start] = graph.nodes[start];
+  if(graph.nodes[start] !== undefined && graph.nodes[end] !== undefined){
+    graph.nodes[start].connectionsTo[end] = graph.nodes[end];
+    graph.nodes[end].connectionsFrom[start] = graph.nodes[start];
+    return true;
+  }
+  return false;
 };
 
 Graph.prototype.disconnectNodes = function(start, end){
   var graph = this;
+  if(graph.nodes[start] !== undefined && graph.nodes[end] !== undefined){
   delete graph.nodes[start].connectionsTo[end];
   delete graph.nodes[end].connectionsFrom[start];
+  return true;
+  }
+  return false;
 };
 
 Graph.prototype.activateNode = function(num) {
