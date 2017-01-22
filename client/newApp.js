@@ -1,8 +1,7 @@
 //**** Node ***
-function Node(num, currentNodeType){
+function Node(num){
   this.num = num;
   this.state = 0;
-  this.type = currentNodeType;
   this.connectionsTo = {}; //All nodes downstream
   this.connectionsFrom = {}; //All nodes upstream
 };
@@ -18,7 +17,7 @@ function Graph() {
 // **** Graph Methods ***
 Graph.prototype.addNode = function(){
   var graph = this;
-  var node = new Node(graph.counter, graph.currentNodeType);
+  var node = new Node(graph.counter);
   graph.nodes[graph.counter] = node;
   graph.counter++;
   return node;
