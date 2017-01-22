@@ -24,20 +24,21 @@ In the latter case it would affect individual neurons and their state, or their 
 These changes would then be fed into the jCanvas drawing functions that would visualize them to the screen.
 
 ![data flow](https://s8.postimg.org/vcndudnqt/Data_Flow.png)
+
 (Requires an update to reflect data structure refactor)
 
 ####Data Structures
 #####Nodes
-I implemented a Node class that stores imformation about nodes that it is connected to, nodes that connect to it, that node's particular state, and a unique ID (integer) for that node.
+I implemented a Node class that stores information about nodes that it is connected to, nodes that connect to it, that node's particular state, and a unique ID (integer) for that node.
 
-Technically, the nodes would only need know what nodes it connects to it downstream, but I also added a reference to nodes upstream to improve the efficiency of deleting nodes and its connections. With the backwards reference the runtime is proportional to how well connected a particular
-node is, rather than the total number of nodes in the graph.
+Technically, an individual node would only need to know what nodes it connects to downstream. I added a reference to nodes upstream to improve the efficiency of deleting nodes and their connections. With the backwards reference the runtime is proportional to how many nodes a particular
+node is connected (upstream and downstream), rather than the total number of nodes in the graph.
 
 #####Graph
 
 I implemented a Graph class that stored all the nodes, a unique ID counter for new nodes, and whether the graph was in the process of simulating.
 
-It also had the CRUD methods for adding/connecting/activating nodes and also for updating the state of the simulation.
+It also had the CRUD methods for adding/connecting/activating nodes and their inverses, as well as for running the simulation.
 
 ####Space/Time Complexity
 
@@ -51,10 +52,10 @@ There was a lot of redundant state checking and I found a way to optimize my cod
 ######More Output Node Types
 One of the main features I'm planning to implement is a greater degree of abstraction are the kinds of **output nodes**. Currently the only special type of node is a spinner node, which, when it receives a signal will spin a predetermined amount. Ideally there would be several different kinds or even user customizable types of nodes, which could ultimately interact with one another in complex ways. The goal there is to abstractly simulate how our brain fires off signals that cause our muscles or organs to activate and perform a certain action.
 
-######More Connection Node Types
+######Signal Thresholds
 One feature that will add a lot of complexity to the simulator and add a layer of realism is the ability for nodes to only activate if a given threshold is reached. This will be similar to how real neurons fire, where if a signal isn't strong enough, the neuron's action potential won't be reached, and it won't pass on the signal. This could be achieved with setting some kind of threshold property on the neuron: it would only activate if 2 or more signals hit it simultaneously.
 
 This will also have the effect of making the neurons act like logic gates, though on a spectrum, where more sensitive neurons are closer to OR gates, and less sensitive ones are like AND gates.
 
 ######Saving/Loading Graphs
-Something I'd like to add would be the ability load in or save graphs to share or work on them in the future. It will require a bit of a code refactor and building out the back end more and creating a database.
+Something I'd like to add would be the ability load in or save graphs to share or work on them in the future. It will require a bit of a code refactor, building out the backend a lot more and creating a database.
