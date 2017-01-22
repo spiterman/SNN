@@ -17,7 +17,7 @@ function BasicNode(x, y, n, simulation){
   this.strokeWidth = 4;
   this.strokeStyle = 'black';
   this.fillStyle = 'red';
-  this.dblclick = dblClick(simulation);
+  this.dblclick = selectDblClickAction(simulation);
   this.dragstop = redrawConnections(simulation);
 }
 

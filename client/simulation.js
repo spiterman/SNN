@@ -8,10 +8,11 @@ function Simulation(graph, canvas) {
   var maxNeurons = 30;
   this.neuronDistance = 3;
   this.neuronRadius = 25;
-  this.neuronCount = 0;
+  this.spinnerRadius = 45;
   this.colors = {
     'active': 'yellow',
-    'inactive': 'red'
+    'inactive': 'red',
+    'spinner': 'purple'
   };
 
   // Drawing Functions
@@ -22,7 +23,8 @@ function Simulation(graph, canvas) {
     // Make sure neurons aren't too close
     if(isValidPosition(x, y, sim)){
       var node = sim.graph.addNode(); // Graph properties
-      var neuron = new Neuron(x, y, node.num, sim); // Drawing properties
+      var nodeConstructor = selectNeuronType(sim);
+      var neuron = new nodeConstructor(x, y, node.num, sim); // Drawing properties
       var text = new Text(x, y, node.num, sim); // Add text
 
       // Draw to Canvas
@@ -35,13 +37,50 @@ function Simulation(graph, canvas) {
   // Add Canvas Click Handlers
   this.canvas.click(sim.drawNeuron);
 
+  // Manage Connections
 
+  this.updateConnections = function (str){
+    var start = $('#startNode');
+    var end = $('#endNode');
+    if(str === 'connect'){
+      sim.drawConnection(start.val(), end.val());
+    }
+    if(str === 'disconnect'){
+      // Disconnect Functionality;
+      sim.deleteConnection(start.val(), end.val());
+    }
+    start.val("");
+    end.val("");
+  }
+
+  this.drawConnection = function(start, end){
+    if(sim.graph.connectNodes(start, end)){
+      var endpoints = generateEndpoints(start, end, sim);
+      var connection = new Connection(endpoints);
+      sim.canvas.addLayer(connection)
+                 .drawLayers();
+    }
+  }
+
+  this.deleteConnection = function(start, end){
+    if(sim.graph.disconnectNodes(start, end)){
+      sim.canvas.removeLayer('N' + start + 'N' + end)
+                .drawLayers();
+    }
+  }
+
+// Updating State
   this.drawNextState = function(){
-    var neurons = sim.canvas.getLayers((layer) => layer.type === 'arc');
+    var neurons = sim.canvas.getLayers((layer) => layer.type === 'arc' || layer.type === 'polygon');
     neurons.forEach((neuron) => {
-      var num = neuron.name[1];
+      var num = neuron.num;
       if(sim.graph.nodes[num].state === 1){
         neuron.fillStyle = 'yellow';
+        if(neuron.type === 'polygon'){
+          sim.canvas.animateLayer(neuron.name, {
+            rotate: '+=180'
+          });
+        }
       } else {
         neuron.fillStyle = 'red';
       }
@@ -71,36 +110,6 @@ function Simulation(graph, canvas) {
 
   this.endSimulation = function(){
     sim.isSimulationRunning = false;
-  }
-
-  // Manage Connections
-
-  this.updateConnections = function (str){
-    var start = $('#startNode');
-    var end = $('#endNode');
-    if(str === 'connect'){
-      sim.drawConnection(start.val(), end.val());
-    }
-    if(str === 'disconnect'){
-      // Disconnect Functionality;
-      sim.deleteConnection(start.val(), end.val());
-    }
-    start.val("");
-    end.val("");
-  }
-
-  this.drawConnection = function(start, end){
-    sim.graph.connectNodes(start, end);
-    var endpoints = generateEndpoints(start, end, sim);
-    var connection = new Connection(endpoints);
-    sim.canvas.addLayer(connection)
-               .drawLayers();
-  }
-
-  this.deleteConnection = function(start, end){
-    sim.graph.disconnectNodes(start, end);
-    sim.canvas.removeLayer('N' + start + 'N' + end)
-              .drawLayers();
   }
 
 // Control Panel
